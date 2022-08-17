@@ -1,4 +1,9 @@
-import { openConnectionDialog } from "./godice-handler.js"
+
+// Open the Bluetooth connection dialog for choosing a GoDice to connect
+function openConnectionDialog() {
+	const newDice = new GoDice();
+	newDice.requestDevice();
+}
 
 Hooks.on('renderUserConfig', (app: UserConfig, html: JQuery<HTMLElement>) => {
 	if (!game.user.isGM) return;

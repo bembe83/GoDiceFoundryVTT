@@ -14,7 +14,8 @@
 		"Setting_Options": {
 			"Disabled": "goDice Rolls Disabilitato",
 			"Always": "Always Usa goDice Rolls",
-			"Toggle": "Attiva/Disattiva goDice Rolls (vedi documentazione)"
+			"Toggle": "Attiva/Disattiva goDice Rolls (vedi documentazione)",
+			"Connect": "Connetti un nuovo goDice"
 		},
 		"SceneControlTitle": "Attiva/Disattiva goDice Roll",
 		"Reload_Title": "Ricarica pagina?",

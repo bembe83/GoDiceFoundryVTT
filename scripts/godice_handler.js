@@ -22,12 +22,6 @@ function LoadStoredInfos(event)
     // window.attachEvent('onload', LoadStoredInfos);
 // }
 
-// Open the Bluetooth connection dialog for choosing a GoDice to connect
-export function openConnectionDialog() {
-	const newDice = new GoDice();
-	newDice.requestDevice();
-}
-
 /**
  * Get a new dice element or it's instance if it already exists
  * @param {string} diceID - the die unique identifier	 

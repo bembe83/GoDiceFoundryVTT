@@ -14,7 +14,8 @@
 		"Setting_Options": {
 			"Disabled": "goDice Rolls Disabled",
 			"Always": "Always use goDice rolls",
-			"Toggle": "Toggle goDice rolls (see documentation)"
+			"Toggle": "Toggle goDice rolls (see documentation)",
+			"Connect": "Connect new goDice"
 		},
 		"SceneControlTitle": "Toggle goDice Rolling",
 		"Reload_Title": "Reload page?",

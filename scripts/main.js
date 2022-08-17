@@ -5,20 +5,34 @@ function openConnectionDialog() {
 	newDice.requestDevice();
 }
 
-Hooks.on('renderUserConfig', (app: UserConfig, html: JQuery<HTMLElement>) => {
-	if (!game.user.isGM) return;
-	const rollConfig = `$(<div class="form-group">
-		<button onclick="openConnectionDialog()">${'Connect Dice'.localize()}</button>
-	</div>`);
-	html.find('input[name="color"]').parent().after(rollConfig);
-	// Resize the window
-	app.element[0].style.height = '';
-	app.element[0].style.width = '';
-	app.setPosition({});
-	(app as any)._updateObject_ORIG = (app as any)._updateObject;
-	(app as any)._updateObject = async function (...args: any) {
-		const result = await (this as any)._updateObject_ORIG(...args);
-		ui.controls.initialize();
-		return result;
-	};
+Hooks.on('getSceneControlButtons', (controls) => {
+	controls.push({
+		name: 'godicemanager',
+		title: game.i18n.localize('GODICE_ROLLS.Connect'),
+		icon: 'fas fa-dice',
+		layer: 'godicemanager',
+		tools: [
+			{
+			  name: 'connect',
+			  title:  game.i18n.localize('GODICE_ROLLS.Connect'),
+			  icon: 'fas fa-dice',
+			  onClick: () => {
+				openConnectionDialog();
+			  },
+			  button: true
+			}
+		],
+        activeTool: 'connect',
+	});
+});
+
+/**
+ * Handles adding the custom brush controls pallet
+ * and switching active brush flag
+ */
+Hooks.on('renderSceneControls', (controls) => {
+  // Switching to layer
+	if (controls.activeControl === 'godicemanager') {
+		openConnectionDialog();
+	}
 });

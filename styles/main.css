@@ -1,0 +1,28 @@
+.battery-indicator
+{
+	width:  40px;
+	text-align: center;
+}
+
+.die-status
+{
+	width: 100px;
+	height
+	border: ridge;
+}
+
+.battery_low
+{
+	background-color: red;
+}
+
+.battery_medium
+{
+	background-color: orange;
+}
+
+.battery_high
+{
+	background-color: green;
+}
+

@@ -1,0 +1,47 @@
+{
+	"GODICE_ROLLS": {
+		"Error_libWrapper_Missing": "Go Dice Rolls requires the 'libWrapper' module. Per favore installalo and attivalo.",
+		"Settings": {
+			"GM_Name": "Tutti i GM",
+			"GM_Hint": "goDice Roll impostazioni per tutti i GM.",
+			"PC_Name": "Default per tutti i PC",
+			"PC_Hint": "Impostazioni Default goDice Roll per tutti i PC. Questo è sovrascritto deal settaggio del giocatore.",
+			"Flagged_Name": "Flag goDice rolls",
+			"Flagged_Hint": "Inserisci un flag ai roll in chat che usano goDice.",
+			"FocusInput_Name": "Auto-Focus Primo campo di inserimento",
+			"FocusInput_Hint": "Se abilitato, impostera il focus sul primo campo delal finestra di Roll."
+		},
+		"Setting_Options": {
+			"Disabled": "goDice Rolls Disabilitato",
+			"Always": "Always Usa goDice Rolls",
+			"Toggle": "Attiva/Disattiva goDice Rolls (vedi documentazione)"
+		},
+		"SceneControlTitle": "Attiva/Disattiva goDice Roll",
+		"Reload_Title": "Ricarica pagina?",
+		"Reload_Content": "Hai cambiato l'impostazione di goDice roll e la pagina deve essere ricaricata.",
+		"Flag": "(goDice Roll)",
+		"Prompt": {
+			"DefaultTitle": "Richiesta Roll",
+			"Header_RollTerm": "Valori di Roll",
+			"Header_Rolls": "Roll Individuali",
+			"Header_Total": "Totale del Roll",
+			"Await_Roll": "Aspetto il Roll del dado",
+			"Rolling": "Roll...",
+			"RollResult": "Risultato del Roll {0}",
+			"Legacy": "Inserisci un {0}d{1} roll da {0} a {2}",
+			"Legacy_Invalid": "(valore non valido, riprova)"
+		},
+		"Tooltip": {
+			"RollTerm": "The Dice Term in the roll being requested.",
+			"Rolls": "Roll result for each individual requested roll.",
+			"Total": "Total value of combined dice to avoid entering the value for each die."
+		},
+		"Submit": "Submit",
+		"Placeholder": {
+			"Roll": ", vuoto per casuale",
+			"Total_Pt1": "Totale da ",
+			"Total_Pt2": " a "
+		},
+		"InitiativeRollFlavour": "Roll Iniziativa per \"{{name}}\""
+	}
+}

@@ -1,0 +1,47 @@
+{
+	"GODICE_ROLLS": {
+		"Error_libWrapper_Missing": "Go Dice Rolls requires the 'libWrapper' module. Please install and activate it.",
+		"Settings": {
+			"GM_Name": "For All GM",
+			"GM_Hint": "goDice Roll setting for all GM roles.",
+			"PC_Name": "Default For All PC",
+			"PC_Hint": "Default goDice Roll setting for all PC roles. This is overridden by the setting in the player config.",
+			"Flagged_Name": "Flag goDice rolls",
+			"Flagged_Hint": "Add a flag to chat rolls that use goDice dice.",
+			"FocusInput_Name": "Auto-Focus First Input Field",
+			"FocusInput_Hint": "If enabled, will set the focus to the first input field in the roll request window."
+		},
+		"Setting_Options": {
+			"Disabled": "goDice Rolls Disabled",
+			"Always": "Always use goDice rolls",
+			"Toggle": "Toggle goDice rolls (see documentation)"
+		},
+		"SceneControlTitle": "Toggle goDice Rolling",
+		"Reload_Title": "Reload page?",
+		"Reload_Content": "You changed the forced manual rolls setting which needs the page to be reloaded.",
+		"Flag": "(goDice Roll)",
+		"Prompt": {
+			"DefaultTitle": "Roll Request",
+			"Header_RollTerm": "Roll Term ",
+			"Header_Rolls": "Individual Rolls ",
+			"Header_Total": "Roll Total",
+			"Await_Roll": "Waiting roll of dice",
+			"Rolling": "Rolling...",
+			"RollResult": "Rolled {0}",
+			"Legacy": "Please enter a {0}d{1} roll from {0} to {2}",
+			"Legacy_Invalid": "(invalid input, please try again)"
+		},
+		"Tooltip": {
+			"RollTerm": "The Dice Term in the roll being requested.",
+			"Rolls": "Roll result for each individual requested roll.",
+			"Total": "Total value of combined dice to avoid entering the value for each die."
+		},
+		"Submit": "Submit",
+		"Placeholder": {
+			"Roll": ", blank for random",
+			"Total_Pt1": "Total from ",
+			"Total_Pt2": " to "
+		},
+		"InitiativeRollFlavour": "Initiative Roll for \"{{name}}\""
+	}
+}

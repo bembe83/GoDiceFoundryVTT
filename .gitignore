@@ -1,0 +1,9 @@
+*.zip
+**/node_modules/
+**/dist/
+**/bundle/
+**/package-lock.json
+.devenv*
+.vscode/settings.json
+*foundry-reference*
+.DS_Store

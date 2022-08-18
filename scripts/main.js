@@ -6,33 +6,12 @@ function openConnectionDialog() {
 }
 
 Hooks.on('getSceneControlButtons', (controls) => {
-	controls.push({
-		name: 'godicemanager',
-		title: game.i18n.localize('GODICE_ROLLS.Connect'),
+	controls.find(c => c.name == "token")
+	.tools.push({
+		name: 'connect',
+		title:  game.i18n.localize('Connect'),
 		icon: 'fas fa-dice',
-		layer: 'godicemanager',
-		tools: [
-			{
-			  name: 'connect',
-			  title:  game.i18n.localize('GODICE_ROLLS.Connect'),
-			  icon: 'fas fa-dice',
-			  onClick: () => {
-				openConnectionDialog();
-			  },
-			  button: true
-			}
-		],
-        activeTool: 'connect',
+		onClick: () => {  console.log("Dice Manager Clicked"); openConnectionDialog();},
+		button: true
 	});
-});
-
-/**
- * Handles adding the custom brush controls pallet
- * and switching active brush flag
- */
-Hooks.on('renderSceneControls', (controls) => {
-  // Switching to layer
-	if (controls.activeControl === 'godicemanager') {
-		openConnectionDialog();
-	}
 });

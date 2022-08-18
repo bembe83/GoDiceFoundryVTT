@@ -258,7 +258,7 @@ class GoDice {
 	 * Request for the die battery, that should follow by corresponding "BatteryLevel" event (response).
 	 */
 	getBatteryLevel() {
-		console.log(this)
+		console.log(this);
 		this.sendMessage([this.messageIdentifiers.BATTERY_LEVEL]);
 	}
 
@@ -285,7 +285,8 @@ class GoDice {
 	}
 
 	getDiceColor(){
-		return dieColor;
+		console.log(this);
+		return this.dieColor;
 	}
 
 	retrieveDiceColor()

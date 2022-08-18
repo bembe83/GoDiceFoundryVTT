@@ -86,51 +86,25 @@ GoDice.prototype.onDiceConnected = (diceId, diceInstance) => {
 };
 
 GoDice.prototype.onRollStart = (diceId) => {
-	console.log("Roll Start: ", diceId);
-	// let diceType =  getDiceTypeString(connectedDice[diceId]);
-	// // get rolling indicator
-	// const diceIndicatorEl = document.getElementById(diceType + "-die-status");
-	// // show rolling 
-	// diceIndicatorEl.textContent = "Rolling....";
+	let diceType =  getDiceTypeString(connectedDice[diceId]);
+	let colorString =  getDiceColorString(connectedDice[diceId]);
+	console.log("Roll Start: ", diceType, colorString, diceId);
 };
 
 GoDice.prototype.onStable = (diceId, value, xyzArray) => {
-	console.log("Stable event: ", diceId, value);
-	let diceType =  getDiceTypeString(connectedDice[diceId]);
-	// Get roll value indicator and show stable value
-	const diceIndicatorEl = document.getElementById(diceType + "-die-status");
-	diceIndicatorEl.textContent = "Stable";
-
-	addRoll(diceId, value);
+	addRoll(diceId, value, "Stable");
 };
 
 GoDice.prototype.onTiltStable = (diceId, xyzArray, value) => {
-	console.log("TiltStable: ", diceId, xyzArray);
-	let diceType =  getDiceTypeString(connectedDice[diceId]);
-	// Get tile indicator and show raw data
-	const diceIndicatorEl = document.getElementById(diceType + "-die-status");
-	diceIndicatorEl.textContent = "Tilt Stable";
-
-	addRoll(diceId, value);
+	addRoll(diceId, value, "TiltStable");
 };
 
 GoDice.prototype.onFakeStable = (diceId, value, xyzArray) => {
-	console.log("FakeStable: ", diceId, value);
-	let diceType =  getDiceTypeString(connectedDice[diceId]);
-	// Get tile indicator and show fake value
-	const diceIndicatorEl = document.getElementById(diceType + "-die-status");
-	diceIndicatorEl.textContent = "Fake Stable";
-
-	addRoll(diceId, value);
+	addRoll(diceId, value, "FakeStable");
 };
 
 GoDice.prototype.onMoveStable = (diceId, value, xyzArray) => {
-	
-	let diceType =  getDiceTypeString(connectedDice[diceId]);
-	let diceColor = 
-	console.log("MoveStable: ", diceType, diceId, value);
-
-	addRoll(diceId, value);
+	addRoll(diceId, value, "MoveStable");
 };
 
 GoDice.prototype.onBatteryLevel = (diceId, batteryLevel) => {
@@ -149,14 +123,16 @@ GoDice.prototype.onDiceColor = (diceId, color) => {
 	sessionStorage.setItem('connectedDice', JSON.stringify(connectedDice));
 };
 
-function addRoll(diceId, value)
+function addRoll(diceId, value, rollEvent)
 {
 	let diceType =  getDiceTypeString(connectedDice[diceId]);
-	let colorString =  Object.keys(connectedDice[diceId].diceColour)[connectedDice[diceId].dieColor].toLowerCase();
+	let colorString =  getDiceColorString(connectedDice[diceId]);
+	
+	console.log(rollEvent + " event: ", diceType, diceColor, diceId, value);
 	
 	let flagAssigned = false;
 	let id = 0;
-	let diceRolls = document.querySelectorAll("[name^='"+$id+"-']");
+	let diceRolls = document.querySelectorAll("[name^='"+id+"-']");
 	while (flag || diceRolls == null)
 	{
 		for (let i=0; i<diceRolls.length; i++)		

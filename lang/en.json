@@ -22,8 +22,8 @@
 		"Reload_Content": "You changed the forced manual rolls setting which needs the page to be reloaded.",
 		"Flag": "(goDice Roll)",
 		"Prompt": {
-			"DefaultTitle": "Roll Request",
-			"Header_RollTerm": "Roll Term ",
+			"DefaultTitle": "DiceType Request",
+			"Header_DiceType": "Dice Type ",
 			"Header_Rolls": "Individual Rolls ",
 			"Header_Total": "Roll Total",
 			"Await_Roll": "Waiting roll of dice",
@@ -34,6 +34,7 @@
 		},
 		"Tooltip": {
 			"RollTerm": "The Dice Term in the roll being requested.",
+			"DiceType": "Select the dice type to connect.",
 			"Rolls": "Roll result for each individual requested roll.",
 			"Total": "Total value of combined dice to avoid entering the value for each die."
 		},

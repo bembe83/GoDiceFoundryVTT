@@ -22,8 +22,8 @@
 		"Reload_Content": "Hai cambiato l'impostazione di goDice roll e la pagina deve essere ricaricata.",
 		"Flag": "(goDice Roll)",
 		"Prompt": {
-			"DefaultTitle": "Richiesta Roll",
-			"Header_RollTerm": "Valori di Roll",
+			"DefaultTitle": "Richiesta Tipo di Dado",
+			"Header_DiceType": "Tipo di Dado",
 			"Header_Rolls": "Roll Individuali",
 			"Header_Total": "Totale del Roll",
 			"Await_Roll": "Aspetto il Roll del dado",
@@ -34,6 +34,7 @@
 		},
 		"Tooltip": {
 			"RollTerm": "The Dice Term in the roll being requested.",
+			"DiceType": "SSeleziona il tipo di dado da connettere.",
 			"Rolls": "Roll result for each individual requested roll.",
 			"Total": "Total value of combined dice to avoid entering the value for each die."
 		},

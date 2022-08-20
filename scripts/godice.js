@@ -234,7 +234,7 @@ class GoDice {
 
 	onRollStart(){};
 	onBatteryLevel(){};
-	onDiceColor(){};
+	//onDiceColor(){};
 	onStable(){};
 	onFakeStable(){};
 	onTiltStable(){};
@@ -243,13 +243,11 @@ class GoDice {
 
 	/******* API functions *******/
 
-	constructor(diceInstance)
+	constructor(diceId)
 	{
-		if(diceInstance != null)
+		if(diceId != null)
 		{
-			this.GlobalDeviceId = diceInstance.GlobalDeviceId;
-			this.dieType = diceInstance.dieType;
-			this.dieColor = diceInstance.dieColor;
+			this.GlobalDeviceId = diceId;
 			this.newConnection = false;
 		}
 	}
@@ -289,10 +287,12 @@ class GoDice {
 		return this.dieColor;
 	}
 
-	retrieveDiceColor()
+	async retrieveDiceColor()
 	{
 		console.log(this);
-		//this.sendMessage([this.messageIdentifiers.DICE_COLOUR]);
+		const promises = [];
+		promises.push(this.sendMessage([this.messageIdentifiers.DICE_COLOUR]));
+		await Promise.all(promises);
 	}
 
 	setDieType(newDieType) {
@@ -646,6 +646,10 @@ class GoDice {
 
 	onDisconnected(event) {
 		console.debug('> Bluetooth Device disconnected:' + event);
+	}
+
+	onDiceColor(diceId, color){
+		this,dieColor = color;
 	}
 
 }

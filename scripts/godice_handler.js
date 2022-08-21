@@ -48,9 +48,6 @@ async function selectDiceType(diceInstance)
 	{	
 		//Show popup to select the dice Type
 		//diceType = prompt("Select the dice Type","D6");
-		const diceTypePrompt = new DiceTypePrompt();
-		//diceTypePrompt.render(true);
-		//diceType = await diceTypePrompt.RequestResult();
 		let diceType = "";
         let data =[];
 		for (const typeKey of Object.keys(GoDice.diceTypes)) {
@@ -63,11 +60,12 @@ async function selectDiceType(diceInstance)
 		await Dialog.prompt({
 				title: game.i18n.localize("GODICE_ROLLS.Prompt.DefaultTitle"),
 				content: template,
+				icon: `<i class="fas fa-check"></i>`,				
 				label: game.i18n.localize("GODICE_ROLLS.Submit"),
 				callback: async(html) => {
-					console.log(html);
-					//let selectedType = html.find('diceTypes').options[html.find('diceTypes').selectedIndex].value;
-					//diceType = selectedType;
+					console.log(html[0].querySelector('diceTypes'));
+					let selectedType = html[0].querySelector('#diceTypes').options[html[0].querySelector('#diceTypes').selectedIndex].value;
+					diceType = selectedType;
 				}
 		});
 		diceInstance.setDieType(GoDice.diceTypes[diceType]);
@@ -76,20 +74,10 @@ async function selectDiceType(diceInstance)
 	return;
 }
 
-function getDiceTypeString(diceInstance)
-{
-	return Object.keys(GoDice.diceTypes)[diceInstance.getDieType()];
-}
-
-function getDiceColorString(diceInstance)
-{
-	return Object.keys(diceInstance.diceColour)[diceInstance.getDiceColor()];
-}
-
 function addConnectedDice(diceId, diceInstance)
 {
-	let diceType = getDiceTypeString(diceInstance);	
-	let diceColor = getDiceColorString(diceInstance);
+	let diceType = diceInstance.getDiceTypeString();	
+	let diceColor = diceInstance.getDiceColorString();
 	
 	let hotbar = document.getElementById('hotbar');
 }
@@ -100,9 +88,16 @@ function saveDices(){
 
 function disconnectAll()
 {
-	connectedDice.forEach(function(diceId, diceInstance) {
-		disconnectDice(diceId);
-	});
+	if(connectedDice)
+	{
+		connectedDice.forEach(function(diceInstance, diceId) {
+			disconnectDice(diceId);
+		});
+	}
+	else
+	{
+		console.log("No dice connected");
+	}
 }
 
 function disconnectDice(diceId)
@@ -123,9 +118,9 @@ async function addRoll(diceId, value, rollEvent)
 	{
 		console.log("Module: df-manual-rolls not found. ", err);
 	}
-	let diceType =  getDiceTypeString(connectedDice.get(diceId);
+	let diceType = diceInstance.getDiceTypeString();	
+	let diceColor = diceInstance.getDiceColorString();
 	let diceFaces = parseInt(diceType.replace("D", "").replace("X","0"));
-	let colorString =  getDiceColorString(connectedDice.get(diceId);
 	
 	console.log(rollEvent + " event: ", diceType, colorString, diceId, value);
 	
@@ -135,7 +130,7 @@ async function addRoll(diceId, value, rollEvent)
 	if(manualRollActive)
 	{
 		let diceRolls = document.querySelectorAll("[name^='"+id+"-']");
-		if(diceRolls)
+		if(!diceRolls)
 		{
 			let r = new Roll("1"+diceType);
 			await r.evaluate({ async: true });
@@ -228,16 +223,17 @@ GoDice.prototype.onDiceConnected = (diceId, diceInstance) => {
 	}
 	else
 	{
-		console.log("Dice connected: ", diceId);
+		console.log("Connecting Dice: ", diceId);
 		selectDiceType(diceInstance);
 		connectedDice.set(diceId, diceInstance);
 		saveDices();
+		console.log("Dice connected: ", diceId, diceInstance.getDiceTypeString(), diceInstance.getDiceColorString());
 	}
 };
 
 GoDice.prototype.onRollStart = (diceId) => {
-	let diceType =  getDiceTypeString(connectedDice.get(diceId);
-	let colorString =  getDiceColorString(connectedDice.get(diceId);
+	let diceType = connectedDice.get(diceId).getDiceTypeString();	
+	let diceColor = connectedDice.get(diceId).getDiceColorString();
 	console.log("Roll Start: ", diceType, colorString, diceId);
 };
 
@@ -260,41 +256,7 @@ GoDice.prototype.onMoveStable = (diceId, value, xyzArray) => {
 GoDice.prototype.onBatteryLevel = (diceId, batteryLevel) => {
 	console.log("BetteryLevel: ", diceId, batteryLevel);
 	// get dice battery indicator element
-	const batteryLevelEl = document.getElementById(diceId + "-battery-indicator");
-	connectedDice[diceId].batteryLevel = batteryLevel;
-	sessionStorage.setItem('connectedDice', JSON.stringify(connectedDice));
+	//const batteryLevelEl = document.getElementById(diceId + "-battery-indicator");
+	connectedDice.get(diceId).batteryLevel = batteryLevel;
+	saveDices();
 };
-
-class DiceTypePrompt extends FormApplication {
-    constructor() {
-        super(...arguments);
-        this._diceType = 0;
-    }
-    static get defaultOptions() {
-        return mergeObject(FormApplication.defaultOptions, {
-            title: game.i18n.localize("GODICE_ROLLS.Prompt.DefaultTitle"),
-            template: `modules/GoDiceModule/templates/diceType-prompt.hbs`,
-            width: 400,
-        });
-    }
-    getData(_options) {
-        const data = [];
-        for (const typeKey of Object.keys(GoDice.diceTypes)) {
-            data.push({
-                id: GoDice.diceTypes[typeKey],
-                type: typeKey
-            });
-        }
-        return { diceTypes: data };
-    }
-    RequestResult() {
-        return new Promise((res, _) => this._diceType);
-    }
-    _updateObject(_, formData) {
-        const diceTypeSelect = formData[`diceTypes`];
-	    this._diceType = document.getElementById('diceTypes').options[document.getElementById('diceTypes').selectedIndex].value;
-	    return undefined;
-    }
-    _onSubmit()
-}
-

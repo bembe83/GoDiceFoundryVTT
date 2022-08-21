@@ -287,6 +287,11 @@ class GoDice {
 		return this.dieColor;
 	}
 
+	getDiceColorString()
+	{
+		return Object.keys(this.diceColour)[this.dieColor];
+	}
+
 	async retrieveDiceColor()
 	{
 		console.log(this);
@@ -302,6 +307,11 @@ class GoDice {
 	//return stored dice type
 	getDieType() {
 		return this.dieType
+	}
+
+	getDiceTypeString(diceInstance)
+	{
+		return Object.keys(GoDice.diceTypes)[this.dieType];
 	}
 	
 	/**

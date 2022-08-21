@@ -1,21 +1,5 @@
-<form>
-	<table>
-		<thead>
-			<th>{{localize "GODICE_ROLLS.Prompt.Header_RollTerm"}}<a class="button" title="{{localize "GODICE_ROLLS.Tooltip.DiceType"}}">
-					<i class="fas fa-question-circle"></i></a></th>
-		</thead>
-		<tbody>
-			<tr>
-				<td>
-					<select id="diceTypes">
-						{{#each diceTypes}}
-						<option id={{type}} value={{id}}>{{type}}</option>
-						{{/each}}
-					</select>
-				</td>
-			</tr>
-		</tbody>
-		<tfoot>
-		</tfoot>
-	</table>
-</form>
+<select id="diceTypes">
+	{{#each diceTypes}}
+	<option id={{type}} value={{id}}>{{type}}</option>
+	{{/each}}
+</select>

@@ -1,6 +1,7 @@
 {
 	"GODICE_ROLLS": {
 		"Error_libWrapper_Missing": "Go Dice Rolls requires the 'libWrapper' module. Please install and activate it.",
+		"ModuleName":"modules/GoDiceModule/",
 		"Settings": {
 			"GM_Name": "For All GM",
 			"GM_Hint": "goDice Roll setting for all GM roles.",
@@ -34,7 +35,7 @@
 		},
 		"Tooltip": {
 			"RollTerm": "The Dice Term in the roll being requested.",
-			"DiceType": "Select the dice type to connect.",
+			"DiceType": "Select the dice type to connect",
 			"Rolls": "Roll result for each individual requested roll.",
 			"Total": "Total value of combined dice to avoid entering the value for each die."
 		},

@@ -9,7 +9,6 @@
   "dependencies": [
     { "name": "dnd5e", "type": "system" },
     { "name": "lib-wrapper" },
-	{ "name": "df-manual-rolls"}
   ],
   "languages": [{ "lang": "en", "name": "English", "path": "lang/en.json" },{ "lang": "it", "name": "Italiano", "path": "lang/it.json" }],
   "scripts": [ "scripts/godice.js", "scripts/godice_handler.js", "scripts/main.js" ],

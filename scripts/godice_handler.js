@@ -1,4 +1,5 @@
 const connectedDice = new Map();
+const modulePath = "modules/GoDiceModule/";
 
 Hooks.on('getSceneControlButtons', (controls) => {
 	controls.find(c => c.name == "token")
@@ -43,12 +44,11 @@ function openConnectionDialog() {
 
 async function selectDiceType(diceInstance)
 {
-	let diceType = "";
+	let diceType = null;
 	if(diceInstance.newConnection)
 	{	
 		//Show popup to select the dice Type
 		//diceType = prompt("Select the dice Type","D6");
-		let diceType = "";
         let data =[];
 		for (const typeKey of Object.keys(GoDice.diceTypes)) {
             data.push({
@@ -56,22 +56,61 @@ async function selectDiceType(diceInstance)
                 type: typeKey
             });
         }
-        let template = await renderTemplate("modules/GoDiceModule/templates/diceType-prompt.hbs",{diceTypes: data});
+        let args = {};
+        args["label"] = game.i18n.localize("GODICE_ROLLS.Prompt.Header_DiceType");
+        args["diceTypes"] = data;
+        args["path"] = modulePath+"/images";
+        args["diceColor"] = diceInstance.getDiceColorString();
+        let template = await renderTemplate(modulePath+"templates/diceType-prompt.hbs", args);
 		await Dialog.prompt({
 				title: game.i18n.localize("GODICE_ROLLS.Prompt.DefaultTitle"),
 				content: template,
 				icon: `<i class="fas fa-check"></i>`,				
 				label: game.i18n.localize("GODICE_ROLLS.Submit"),
 				callback: async(html) => {
-					console.log(html[0].querySelector('diceTypes'));
-					let selectedType = html[0].querySelector('#diceTypes').options[html[0].querySelector('#diceTypes').selectedIndex].value;
-					diceType = selectedType;
+					console.log(document.getElementById('diceTypes'));
+					diceType = getSelectedDice();
+				},
+				options: { 
+					height:'140px'
 				}
 		});
-		diceInstance.setDieType(GoDice.diceTypes[diceType]);
+		if(diceType)
+		{
+			diceInstance.setDieType(GoDice.diceTypes[diceType]);
+			console.log("Selected Dice Type:", diceType);
+		}
+		else
+			console.log("Error retrieving Dice Type");
 	}
 
-	return;
+	return diceType;
+}
+
+function getSelectedDice()
+{
+	let selectedValue = null;
+	let selectElement = document.getElementById('diceTypes');
+	if(selectElement)
+	{
+		let selectedIndex = selectElement.selectedIndex;
+		selectedValue = selectElement[selectedIndex].id;
+	}
+	else
+	{
+		console.log("No diceTypes element found");
+	}
+	return selectedValue;
+}
+
+function changeImageDice()
+{
+	let selectedDice = getSelectedDice();
+	if(selectedDice)
+	{
+		let imgEl = document.getElementById('diceTypeIcon');
+		imgEl.src=modulePath+"/images/"+selectedDice+".webp";
+	}
 }
 
 function addConnectedDice(diceId, diceInstance)
@@ -110,30 +149,23 @@ function disconnectDice(diceId)
 
 async function addRoll(diceId, value, rollEvent)
 {
-	let manualRollInstalled = game.modules.get("df-manual-rolls")?true:false;
-	let manualRollActive = false;
-	try{
-		manualRollActive = game.modules.get("df-manual-rolls").active;
-	} catch (err)
-	{
-		console.log("Module: df-manual-rolls not found. ", err);
-	}
+	let diceInstance = connectedDice.get(diceId);
 	let diceType = diceInstance.getDiceTypeString();	
 	let diceColor = diceInstance.getDiceColorString();
 	let diceFaces = parseInt(diceType.replace("D", "").replace("X","0"));
 	
-	console.log(rollEvent + " event: ", diceType, colorString, diceId, value);
+	console.log(rollEvent + " event: ", diceType, diceColor, diceId, value);
 	
 	let flagAssigned = false;
 	let id = 0;
 
-	if(manualRollActive)
+	if(isManualRollActive())
 	{
 		let diceRolls = document.querySelectorAll("[name^='"+id+"-']");
 		if(!diceRolls)
 		{
 			let r = new Roll("1"+diceType);
-			await r.evaluate({ async: true });
+			r.evaluate({ async: true });
 			diceRolls = document.querySelectorAll("[name^='"+id+"-']");
 		}
 
@@ -160,7 +192,6 @@ async function addRoll(diceId, value, rollEvent)
 	{
 		let r = new Roll("1"+diceType);
 		await r.evaluate({ async: true });
-        //Try to overwrite each attribute, starting with the terms; getters will be caught and ignored.
         try {
 	    	r.terms[0].results[0].result = value;
 	    	r._total = value;
@@ -169,12 +200,35 @@ async function addRoll(diceId, value, rollEvent)
 		{ 
 			console.log("Exp:", err);
 		}
-        r.toMessage({
-        	speaker: findSpeaker()
-        });
+        let chatOptions = {
+			type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+			rolls: [r],
+			rollMode: game.settings.get("core", "rollMode"),
+			content: "<div style=\"color:"+diceColor+"\">GoDice Roll 1"+diceType+"</div>"
+		};
+		ChatMessage.create(chatOptions);
 	}
+}
 
-	
+function isManualRollActive()
+{
+	let manualRollInstalled = game.modules.get("df-manual-rolls")?true:false;
+	let manualRollModuleActive = false;
+	let manualRollActivated = false;
+	try{
+		if(manualRollInstalled)
+			manualRollModuleActive = game.modules.get("df-manual-rolls").active;
+		if(manualRollModuleActive)
+		{
+			let manualRollSetting = game.user.isGM?game.settings.get("df-manual-rolls","gm"):game.settings.get("df-manual-rolls","pc");
+			let manualRollToggle = game.settings.get("df-manual-rolls","toggled");
+			manualRollActivated = (manualRollSetting === 'always' || (manualRollSetting === 'toggle' && manualRollToggle));
+		}
+	} catch (err)
+	{
+		console.log("Module: df-manual-rolls not found. ", err);
+	}
+	return manualRollActivated;
 }
 
 function htmlToElement(html) {
@@ -224,17 +278,24 @@ GoDice.prototype.onDiceConnected = (diceId, diceInstance) => {
 	else
 	{
 		console.log("Connecting Dice: ", diceId);
-		selectDiceType(diceInstance);
-		connectedDice.set(diceId, diceInstance);
-		saveDices();
-		console.log("Dice connected: ", diceId, diceInstance.getDiceTypeString(), diceInstance.getDiceColorString());
+		if(!diceInstance.newConnection || selectDiceType(diceInstance))
+		{
+			connectedDice.set(diceId, diceInstance);
+			saveDices();
+			console.log("Dice connected: ", diceId, diceInstance.getDiceTypeString(), diceInstance.getDiceColorString());
+		}else{
+			console.log("Error connecting dice");
+			diceInstance.onDisconnectButtonClick();
+			connectedDice.delete(diceId);
+			saveDices();
+		}
 	}
 };
 
 GoDice.prototype.onRollStart = (diceId) => {
 	let diceType = connectedDice.get(diceId).getDiceTypeString();	
 	let diceColor = connectedDice.get(diceId).getDiceColorString();
-	console.log("Roll Start: ", diceType, colorString, diceId);
+	console.log("Roll Start: ", diceType, diceColor, diceId);
 };
 
 GoDice.prototype.onStable = (diceId, value, xyzArray) => {

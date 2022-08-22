@@ -34,7 +34,7 @@
 		},
 		"Tooltip": {
 			"RollTerm": "The Dice Term in the roll being requested.",
-			"DiceType": "SSeleziona il tipo di dado da connettere.",
+			"DiceType": "Seleziona il tipo di dado da connettere.",
 			"Rolls": "Roll result for each individual requested roll.",
 			"Total": "Total value of combined dice to avoid entering the value for each die."
 		},

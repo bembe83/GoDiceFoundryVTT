@@ -1,5 +1,5 @@
 const connectedDice = new Map();
-const modulePath = "modules/GoDiceModule/";
+const modulePath = "modules/go-dice-module/";
 
 Hooks.on('getSceneControlButtons', (controls) => {
 	controls.find(c => c.name == "token")

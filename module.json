@@ -1,19 +1,32 @@
 {
+  "id:": "go-dice-module",
   "name": "go-dice-module",
-  "title": "GoDiceModule",
+  "title": "GoDice Module",
   "description": "A module to allow to play with real goDice dices with dnd5e system",
-  "author": "Bembe83",
-  "version": "1.0.0",
-  "minimumCoreVersion": "9",
-  "compatibleCoreVersion": "9",
-  "dependencies": [
-    { "name": "dnd5e", "type": "system" },
-    { "name": "lib-wrapper", "type": "module" }
+  "authors": [ 
+    { "name":"Bembe83" } 
   ],
-  "languages": [{ "lang": "en", "name": "English", "path": "lang/en.json" },{ "lang": "it", "name": "Italiano", "path": "lang/it.json" }],
-  "scripts": [ "scripts/godice.js", "scripts/godice_handler.js", "scripts/main.js" ],
-  "styles": [ "styles/main.css" ],
+  "version": "1.0.0",
+  "minimumCoreVersion": "10.284",
+  "compatibleCoreVersion": "10",
+  "compatibility": {
+    "minimum": 10,
+    "verified": "10.284"
+  },
+  "languages": [
+      { "lang": "en", "name": "English", "path": "lang/en.json" },
+      { "lang": "it", "name": "Italiano", "path": "lang/it.json" }
+  ],
+  "scripts": [
+    "./scripts/GoDice.js",
+    "./scripts/Utils.js",
+    "./scripts/DiceTypePrompt.js",
+    "./scripts/GoDiceExt.js",
+    "./main.js"],
+  "styles": [ 
+    "styles/main.css" 
+  ],
   "url": "https://github.com/bembe83/GoDiceFoundryVTT",
-  "manifest": "https://github.com/bembe83/GoDiceFoundryVTT/raw/V1.0.0/module.json",
-  "download": "https://github.com/bembe83/GoDiceFoundryVTT/archive/refs/tags/V1.0.0.zip"
+  "manifest": "https://github.com/bembe83/GoDiceFoundryVTT/releases/download/V1.0.0/module.json",
+  "download": "https://github.com/bembe83/GoDiceFoundryVTT/releases/download/V1.0.0/GoDiceFoundryVTT_V1.0.0.zip"
 }

@@ -228,13 +228,10 @@ class GoDice {
 	diceId;
 	rolledValue = 0;
 	dieType = GoDice.diceTypes.D6; // Type of die
-	dieColor = this.diceColour.BLACK;
-	dieBatteryLevel = 0;
-	newConnection = true;
 
 	onRollStart(){};
 	onBatteryLevel(){};
-	//onDiceColor(){};
+	onDiceColor(){};
 	onStable(){};
 	onFakeStable(){};
 	onTiltStable(){};
@@ -243,76 +240,26 @@ class GoDice {
 
 	/******* API functions *******/
 
-	constructor(diceId)
-	{
-		if(diceId != null)
-		{
-			this.GlobalDeviceId = diceId;
-			this.newConnection = false;
-		}
-	}
-
 	/**
 	 * Request for the die battery, that should follow by corresponding "BatteryLevel" event (response).
 	 */
 	getBatteryLevel() {
-		console.log(this);
+		console.log(this)
 		this.sendMessage([this.messageIdentifiers.BATTERY_LEVEL]);
 	}
 
 	/**
-	 * Retunr stored die color or request and wait for the die color (that should follow by corresponding "DiceColor" event (response)).
+	 * Request for the die color, that should follow by corresponding "DiceColor" event (response).
 	 */
-	setDiceColor() {
-		console.log(this);
-		//this.sendMessage([this.messageIdentifiers.DICE_COLOUR]);
-		if(this.bluetoothDevice.name.includes("_K_"))
-			this.dieColor = this.diceColour.BLACK;
-		else if(this.bluetoothDevice.name.includes("_R_"))
-			this.dieColor = this.diceColour.RED;
-		else if(this.bluetoothDevice.name.includes("_G_"))
-			this.dieColor = this.diceColour.GREEN;
-		else if (this.bluetoothDevice.name.includes("_B_"))
-			this.dieColor = this.diceColour.BLUE;
-		else if(this.bluetoothDevice.name.includes("_Y_"))
-			this.dieColor =  this.diceColour.YELLOW;
-		else if(this.bluetoothDevice.name.includes("_O_"))
-			this.dieColor = this.diceColour.ORANGE;
-		else 
-			console.log("Dice Color not handled ornot present in the name, please use retrieveDiceColor() async to retrieve the value");
+	getDiceColor() {
+		console.log(this)
+		this.sendMessage([this.messageIdentifiers.DICE_COLOUR]);
 	}
-
-	getDiceColor(){
-		console.log(this);
-		return this.dieColor;
-	}
-
-	getDiceColorString()
-	{
-		return Object.keys(this.diceColour)[this.dieColor];
-	}
-
-	async retrieveDiceColor()
-	{
-		console.log(this);
-		const promises = [];
-		promises.push(this.sendMessage([this.messageIdentifiers.DICE_COLOUR]));
-		await Promise.all(promises);
-	}
-
+	
 	setDieType(newDieType) {
 		this.dieType = newDieType
 	}
 	
-	//return stored dice type
-	getDieType() {
-		return this.dieType
-	}
-
-	getDiceTypeString(diceInstance)
-	{
-		return Object.keys(GoDice.diceTypes)[this.dieType];
-	}
 	
 	/**
 	 * Open a connection dialog to connect a single GoDice, after successfull connection it will follow by corresponding "DiceConnected" event (response).
@@ -327,29 +274,6 @@ class GoDice {
 				this.bluetoothDevice = device;				
 				this.bluetoothDevice.addEventListener('gattserverdisconnected', this.onDisconnected);				
 				this.connectDeviceAndCacheCharacteristics();				
-			});
-	}
-
-	/**
-	 * Open a connection dialog to connect a single GoDice, after successfull connection it will follow by corresponding "DiceConnected" event (response).
-	 */
-	reconnectDevice() {
-		if (!this.GlobalDeviceId) {
-			return Promise.reject(new Error('No device ID available, use requestDevice instead.'));
-		}
-		return navigator.bluetooth.getDevices()
-			.then(devices => {	
-				for(const device of devices)
-				{
-					if(device.id == this.GlobalDeviceId)
-					{
-						this.GlobalDeviceId = device.id.toString();				
-						this.bluetoothDevice = device;
-						this .newConnection = false;				
-						this.bluetoothDevice.addEventListener('gattserverdisconnected', this.onDisconnected);				
-						this.reConnectDeviceAndCacheCharacteristics();
-					}	
-				}			
 			});
 	}
 
@@ -550,7 +474,7 @@ class GoDice {
 				const diceCurrentNumber = this.getDieValue(data, 2);
 				const xyzArray = this.getXyzFromBytes(data, 2)
 				this.rolledValue = diceCurrentNumber;
-				this.onTiltStable(deviceId, xyzArray, diceCurrentNumber);
+				this.onTiltStable(deviceId, diceCurrentNumber, xyzArray);
 			}
 
 			if (firstByte === 77 && secondByte === 83) {
@@ -593,42 +517,12 @@ class GoDice {
 			})
 	}
 
-	reConnectDeviceAndCacheCharacteristics() {
-		console.debug('Reconnecting to GATT Server...');
-
-		const abortController = new AbortController();
-
-		this.bluetoothDevice.addEventListener('advertisementreceived', (event) => {
-			abortController.abort();
-		 	this.bluetoothDevice.gatt.connect()
-			.then(server => {
-				return server.getPrimaryService("6e400001-b5a3-f393-e0a9-e50e24dcca9e");
-			})
-			.then(service => {
-				this.GoDiceService = service;
-				return service.getCharacteristic("6e400003-b5a3-f393-e0a9-e50e24dcca9e");
-			})
-			.then(characteristic => {
-				this.CubeCharacteristics = characteristic;
-				this.CubeCharacteristics.addEventListener('characteristicvaluechanged', this.handleNotificationChanged);
-				return characteristic.getDescriptors();
-			})
-			.then(descriptors => {
-				this.onStartNotificationsButtonClick();
-			});
-		},{ once: true });
-
-		this.bluetoothDevice.watchAdvertisements({ signal: abortController.signal })
-		.catch(error => console.log('Argh! '+ error));
-	}
-
 
 	onStartNotificationsButtonClick() {
 		console.debug('Starting Notifications...');
 		this.CubeCharacteristics.startNotifications()
 			.then(_ => {
 				console.debug('onDiceConnected');
-				this.setDiceColor();
 				this.onDiceConnected(this.GlobalDeviceId, this);
 			})
 			.catch(error => {
@@ -657,9 +551,4 @@ class GoDice {
 	onDisconnected(event) {
 		console.debug('> Bluetooth Device disconnected:' + event);
 	}
-
-	onDiceColor(diceId, color){
-		this,dieColor = color;
-	}
-
 }

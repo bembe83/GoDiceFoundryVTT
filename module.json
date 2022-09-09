@@ -20,7 +20,7 @@
   "scripts": [
     "./scripts/GoDice.js",
     "./scripts/Utils.js",
-    "./scripts/DiceTypePrompt.js",
+    "./scripts/DieTypePrompt.js",
     "./scripts/GoDiceExt.js",
     "./main.js"],
   "styles": [ 

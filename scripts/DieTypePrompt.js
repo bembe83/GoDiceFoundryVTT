@@ -1,6 +1,6 @@
 class DieTypePrompt
 {
-	static showTypePrompt(diceInstance)
+	static async showTypePrompt(diceInstance)
 	{
 		let diceType = null;
 		if(diceInstance.newConnection)
@@ -8,7 +8,7 @@ class DieTypePrompt
 			//Show popup to select the dice Type
 			if(game)
 			{
-				
+				let modulePath = Utils.getModulePath();
 		        let data =[];
 				for (const typeKey of Object.keys(GoDice.diceTypes)) {
 		            data.push({
@@ -19,16 +19,18 @@ class DieTypePrompt
 		        let args = {};
 		        args["label"] = game.i18n.localize("GODICE_ROLLS.Prompt.Header_DiceType");
 		        args["diceTypes"] = data;
-		        args["path"] = "./images/"//Utils.modulePath+"/images";
-		        args["diceColor"] = diceInstance.getDiceColorString();
-		        let template = await renderTemplate("./templates/diceType-prompt.hbs", args);
+		        args["path"] = modulePath+"images/";
+		        args["dieColor"] = diceInstance.getDieColor(true);
+		        let template; 
+		        template = await renderTemplate(modulePath+"templates/diceType-prompt.hbs", args);
 				await Dialog.prompt({
 						title: game.i18n.localize("GODICE_ROLLS.Prompt.DefaultTitle"),
 						content: template,
 						icon: `<i class="fas fa-check"></i>`,				
 						label: game.i18n.localize("GODICE_ROLLS.Submit"),
 						callback: async(html) => {
-							diceType = getSelectedDie();
+							diceType = DieTypePrompt.getSelectedDie();
+							//diceInstance.setDieType(diceType);
 						},
 						options: { 
 							height:'140px'
@@ -50,7 +52,7 @@ class DieTypePrompt
 		return diceType;
 	}
 
-	getSelectedDie()
+	static getSelectedDie()
 	{
 		let selectedValue = null;
 		let selectElement = document.getElementById('diceTypes');
@@ -66,13 +68,13 @@ class DieTypePrompt
 		return selectedValue;
 	}
 
-	changeImageDie()
+	static changeImageDie()
 	{
-		let selectedDice = getSelectedDie();
+		let selectedDice = DieTypePrompt.getSelectedDie();
 		if(selectedDice)
 		{
 			let imgEl = document.getElementById('diceTypeIcon');
-			imgEl.src="./images/"+selectedDice+".webp";
+			imgEl.src=Utils.getModulePath()+"images/"+selectedDice+".webp";
 		}
 	}
 }

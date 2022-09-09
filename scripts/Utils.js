@@ -13,7 +13,7 @@ class Utils {
 		if(connectedDice)
 		{
 			connectedDice.forEach(function(diceInstance, diceId) {
-				disconnectDice(connectedDice, diceId);
+				Utils.disconnectDice(connectedDice, diceId);
 			});
 		}
 		else
@@ -26,7 +26,15 @@ class Utils {
 		console.log("Disconnect:", diceId);
 		connectedDice.get(diceId).onDisconnectButtonClick();
 		connectedDice.delete(diceId);
-		saveDices(connectedDice);
+		Utils.saveDices(connectedDice);
+	}
+
+	static getModulePath()
+	{
+		let paths = Array.from(document.getElementsByTagName('script')).filter((script)=>{return script.src.includes('GoDice')})[0].src.split("/")
+		let path = "/modules/"+paths[4]+"/";
+		console.debug("Module path: ",path);
+		return path;
 	}
 
 	static isManualRollActive()
@@ -104,7 +112,7 @@ class Utils {
 
 	static showRoll(diceInstance, diceId, value, rollEvent) {
 		if(game)
-			showRollVTT(diceInstance, diceId, value, rollEvent);
+			Utils.showRollVTT(diceInstance, diceId, value, rollEvent);
 		else{
 			let rollitem = document.getElementById('roll');
 			if(rollitem)
@@ -120,37 +128,42 @@ class Utils {
 	}
 
 	static async showRollVTT(diceInstance, diceId, value, rollEvent) {
-		let diceType = diceInstance.getDieType(true);	
-		let diceColor = diceInstance.getDieColor(true);
-		let diceFaces = parseInt(diceType.replace("D", "").replace("X","0"));
+		let dieType = diceInstance.getDieType(true);	
+		let dieColor = diceInstance.getDieColor(true);
+		let dieFaces = parseInt(dieType.replace("D", "").replace("X","0"));
 		
-		console.log(rollEvent + " event: ", diceType, diceColor, value);
+		console.log(rollEvent + " event: ", dieType, dieColor, value);
 		
 		let flagAssigned = false;
 		let id = 0;
 
-		if(isManualRollActive())
+		if(Utils.isManualRollActive())
 		{
 			let diceRolls = document.querySelectorAll("[name^='"+id+"-']");
-			if(!diceRolls)
+			if(!diceRolls || diceRolls.length == 0)
 			{
-				let r = new Roll("1"+diceType);
+				let r = new Roll("1"+dieType);
 				r.evaluate({ async: true });
 				diceRolls = document.querySelectorAll("[name^='"+id+"-']");
 			}
 
-			while (!flagAssigned || diceRolls)
+			while (!flagAssigned || !diceRolls || diceRolls.length == 0)
 			{
-				if(!diceRolls[0].parentElement.previousElementSibling.textContent.includes(diceType.toLowerCase()))
+				if(diceRolls[0].parentElement.previousElementSibling.textContent.includes(dieType.toLowerCase()))
 				{
 					for (let i=0; i<diceRolls.length && !flagAssigned; i++)		
 					{
-						let diceRoll = diceRolls[i];
-						if(diceRoll.value == '' && !diceRoll.name.includes('total'))
+						let dieRoll = diceRolls[i];
+						if(dieRoll.value == '' && !dieRoll.name.includes('total'))
 						{
-							diceRoll.value = value;
-							diceRoll.style.color = colorString;
+							dieRoll.value = value;
+							dieRoll.style.color = dieColor;
 							flagAssigned = true;
+						}
+						if(flagAssigned && i == diceRolls.length-1)
+						{
+							let button = document.getElementsByName("submit")[0];
+							button.click();
 						}
 					}
 				}
@@ -160,7 +173,7 @@ class Utils {
 		}
 		else
 		{
-			let r = new Roll("1"+diceType);
+			let r = new Roll("1"+dieType);
 			await r.evaluate({ async: true });
 	        try {
 		    	r.terms[0].results[0].result = value;

@@ -33,7 +33,7 @@ Hooks.on('getSceneControlButtons', (controls) => {
 Hooks.on('ready', Utils.LoadStoredInfos());
 
 
-GoDice.prototype.onDiceConnected = (diceId, diceInstance) => {
+GoDice.prototype.onDiceConnected = async (diceId, diceInstance) => {
 
 	if(connectedDice.get(diceId))
 	{
@@ -44,10 +44,12 @@ GoDice.prototype.onDiceConnected = (diceId, diceInstance) => {
 		console.log("Connecting Dice: ", diceId);
 		diceInstance.setDieColor();
 		diceInstance.setBatteryLevel();
-		let diceType = DiceTypePrompt.showTypePrompt(diceInstance);	
-		if(!diceInstance.newConnection || diceType)
+		let dieType;
+		dieType = await DieTypePrompt.showTypePrompt(diceInstance);
+		if(!diceInstance.newConnection || dieType)
 		{
-			diceInstance.setDieType(diceType);
+			diceInstance.setDieType(dieType);
+			diceInstance.diceId = diceId;
 			connectedDice.set(diceId, diceInstance);
 			Utils.saveDices(connectedDice);
 			console.log("Dice connected: ", diceId, diceInstance.getDieType(true), diceInstance.getDieColor(true));

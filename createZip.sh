@@ -1,1 +1,1 @@
-tar --exclude={'*.zip','*.sh','.*'} -zcvf GoDiceFoundryVTT_V1.0.0.zip ./*
+zip GoDiceFoundryVTT_V1.0.0.zip ./ -r -0 -x "*.zip" -x "*.sh" -x ".*"

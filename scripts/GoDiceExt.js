@@ -32,7 +32,7 @@ class GoDiceExt extends GoDice {
 
 	getDieColor (needString = false) {
 		if(needString)
-			return Object.keys(GoDice.diceTypes)[this.dieColor];
+			return Object.keys(this.diceColour)[this.dieColor];
 		else
 			return this.dieColor;
 	}

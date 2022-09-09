@@ -1,9 +1,9 @@
 <div class="diceTypes">
 	<label style="margin-right: 10px">{{label}}</label>
-	<select id="diceTypes" onchange="Utils.changeImageDice()">
+	<select id="diceTypes" onchange="DieTypePrompt.changeImageDie()">
 		{{#each diceTypes}}
 		<option id={{type}} value={{id}}>{{type}}</option>
 		{{/each}}
 	</select>
-	<img id="diceTypeIcon" src="{{path}}D6.webp" style="width: 40px; margin-left: 10px; background-color: {{diceColor}};"/>
+	<img id="diceTypeIcon" src="{{path}}D6.webp" style="width: 50px; height: 50px; margin-left: 10px; background-color: {{dieColor}};"/>
 </div>

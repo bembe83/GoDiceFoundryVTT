@@ -8,14 +8,6 @@ class GoDiceExt extends GoDice {
 	dieBatteryLevel = 0;
 	newConnection = true;
 
-	contructor (diceId) {
-		if(diceId != null)
-		{
-			this.GlobalDeviceId = diceId;
-			this.newConnection = false;
-		}
-	}
-
 	getDieType (needString = false) {
 		if(needString)
 			return Object.keys(GoDice.diceTypes)[this.dieType];
@@ -23,11 +15,11 @@ class GoDiceExt extends GoDice {
 			return this.dieType;
 	}
 
-	setDieType (diceType) {
-		if(isNaN(diceType))
-			this.dieType = GoDice.diceTypes[diceType];
+	setDieType (dieType) {
+		if(isNaN(dieType))
+			this.dieType = GoDice.diceTypes[dieType];
 		else
-			this.dieType = diceType; 
+			this.dieType = dieType; 
 	}
 
 	getDieColor (needString = false) {
@@ -107,19 +99,20 @@ class GoDiceExt extends GoDice {
 	/**
 	 * Open a connection dialog to connect a single GoDice, after successfull connection it will follow by corresponding "DiceConnected" event (response).
 	 */
-	reconnectDevice () {
-		if (!this.GlobalDeviceId) {
+	reconnectDevice (dieId, dieType) {
+		if (!dieId) {
 			return Promise.reject(new Error('No device ID available, use requestDevice instead.'));
 		}
 		return navigator.bluetooth.getDevices()
 			.then(devices => {	
 				for(const device of devices)
 				{
-					if(device.id == this.GlobalDeviceId)
+					if(device.id == this.dieId)
 					{
 						this.GlobalDeviceId = device.id.toString();				
 						this.bluetoothDevice = device;
-						this.newConnection = false;				
+						this.newConnection = false;	
+						this.setDieType(dieType);			
 						this.bluetoothDevice.addEventListener('gattserverdisconnected', this.onDisconnected);				
 						this.reConnectDeviceAndCacheCharacteristics();
 					}	

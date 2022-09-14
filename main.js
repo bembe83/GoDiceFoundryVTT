@@ -32,7 +32,6 @@ Hooks.on('getSceneControlButtons', (controls) => {
 
 Hooks.on('ready', Utils.LoadStoredInfos());
 
-
 GoDice.prototype.onDiceConnected = async (diceId, diceInstance) => {
 
 	if(connectedDice.get(diceId))

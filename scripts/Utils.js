@@ -6,7 +6,11 @@ class Utils {
 	}
 
 	static saveDices(connectedDice) {
-		sessionStorage.setItem('connectedDice', JSON.stringify(Array.from(connectedDice.keys())));
+		let diceToStore = [];
+		connectedDice.foreach(function(dieInstance, diceId) {
+			diceToStore.push(diceId+"|"+dieInstance,getDieType(true));
+		});
+		sessionStorage.setItem('connectedDice', JSON.stringify(diceToStore));
 	}
 
 	static disconnectAll(connectedDice) {
@@ -64,10 +68,14 @@ class Utils {
 		if(storedConnectedDice != null)
 		{
 			console.log("Wait... Reloading Stored dices...");
-			let storedDices = JSON.parse(storedConnectedDice);	
-			storedDices.forEach(function(diceId, index) {
-				let newDiceInstance = new GoDiceExt(diceId);
-				newDiceInstance.reconnectDevice();
+			let storedDice = JSON.parse(storedConnectedDice);	
+			storedDice.forEach(function(dieInfo, index) {
+				console.debug("Retrieved info ", dieInfo);
+				let dieId = dieInfo.split("|")[0];
+				let dietype = dieinfo.split("|")[1];
+				console.debug("Reconnecting device ", dieId, " of type ", dieType);
+				let newDieInstance = new GoDiceExt();
+				newDieInstance.reconnectDevice(dieId, dieType);
 			});
 		}
 	}
@@ -115,7 +123,7 @@ class Utils {
 			Utils.showRollVTT(diceInstance, diceId, value, rollEvent);
 		else{
 			let rollitem = document.getElementById('roll');
-			if(rollitem)
+			if(!rollitem)
 			{
 				rollitem = document.createElement('div');
 				rollitem.id ='roll';
@@ -135,6 +143,7 @@ class Utils {
 		console.log(rollEvent + " event: ", dieType, dieColor, value);
 		
 		let flagAssigned = false;
+		let flagAllAssigned = false;
 		let id = 0;
 
 		if(Utils.isManualRollActive())
@@ -147,9 +156,11 @@ class Utils {
 				diceRolls = document.querySelectorAll("[name^='"+id+"-']");
 			}
 
-			while (!flagAssigned || !diceRolls || diceRolls.length == 0)
+			while (!flagAssigned || !flagAllAssigned || !diceRolls || diceRolls.length == 0)
 			{
-				if(diceRolls[0].parentElement.previousElementSibling.textContent.includes(dieType.toLowerCase()))
+				let dieRollTR = document.querySelectorAll("[name^='"+id+"-0']")[0].parentElement;
+				let dieLabel = dieRollTR.previousElementSibling?dieRollTR.previousElementSibling:null;
+				if(dieLabel && dieLabel.textContent.includes(dieType.toLowerCase()))
 				{
 					for (let i=0; i<diceRolls.length && !flagAssigned; i++)		
 					{
@@ -163,6 +174,7 @@ class Utils {
 						if(flagAssigned && i == diceRolls.length-1)
 						{
 							let button = document.getElementsByName("submit")[0];
+							flagAllAssigned = true;
 							button.click();
 						}
 					}

@@ -30,7 +30,6 @@ class DieTypePrompt
 						label: game.i18n.localize("GODICE_ROLLS.Submit"),
 						callback: async(html) => {
 							diceType = DieTypePrompt.getSelectedDie();
-							//diceInstance.setDieType(diceType);
 						},
 						options: { 
 							height:'140px'

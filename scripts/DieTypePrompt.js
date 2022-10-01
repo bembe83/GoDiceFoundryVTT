@@ -1,6 +1,10 @@
+/**
+ * @class
+ * The Prompt to choose the connected die type.
+ */
 class DieTypePrompt
 {
-	static async showTypePrompt(diceInstance)
+	async showTypePrompt(diceInstance)
 	{
 		let diceType = null;
 		if(diceInstance.newConnection)
@@ -29,7 +33,7 @@ class DieTypePrompt
 						icon: `<i class="fas fa-check"></i>`,				
 						label: game.i18n.localize("GODICE_ROLLS.Submit"),
 						callback: async(html) => {
-							diceType = DieTypePrompt.getSelectedDie();
+							diceType = this.getSelectedDie();
 						},
 						options: { 
 							height:'140px'
@@ -51,7 +55,7 @@ class DieTypePrompt
 		return diceType;
 	}
 
-	static getSelectedDie()
+	getSelectedDie()
 	{
 		let selectedValue = null;
 		let selectElement = document.getElementById('diceTypes');
@@ -67,9 +71,9 @@ class DieTypePrompt
 		return selectedValue;
 	}
 
-	static changeImageDie()
+	changeImageDie()
 	{
-		let selectedDice = DieTypePrompt.getSelectedDie();
+		let selectedDice = this.getSelectedDie();
 		if(selectedDice)
 		{
 			let imgEl = document.getElementById('diceTypeIcon');

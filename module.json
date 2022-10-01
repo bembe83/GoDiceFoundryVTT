@@ -44,6 +44,7 @@
     "./scripts/Utils.js",
     "./scripts/DieTypePrompt.js",
     "./scripts/GoDiceExt.js",
+    "./scripts/DiceManagerLayer.js",
     "./main.js"],
   "styles": [ 
     "styles/main.css" 

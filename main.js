@@ -12,25 +12,44 @@ function disconnect()
 
 // Open the Bluetooth connection dialog for choosing a GoDice to connect
 Hooks.on('getSceneControlButtons', (controls) => {
-	controls.find(c => c.name == "token")
-	.tools.push({
-		name: 'connect',
-		title:  game.i18n.localize('Connect'),
-		icon: 'fas fa-dice',
-		onClick: () => {  console.log("Dice Manager Clicked"); connect();},
-		button: true
-	});
-	controls.find(c => c.name == "token")
-	.tools.push({
-		name: 'disconnect',
-		title:  game.i18n.localize('Disconnect all dices'),
-		icon: 'fas fa-trash',
-		onClick: () => {  console.log("Disconnecting all dices"); disconnect();},
-		button: true
-	});
+	console.debug(controls);
+	//let controls = new SceneControls().controls;
+	if(!controls.find(c => c.name == "dicemanager"))
+	{
+		let diceManager = {
+			"name": "dicemanager",
+			"title": "GODICE_ROLLS.Tools.diceManagerTitle",
+			"icon": 'fas fa-dice',
+			"layer": "dicemanager",
+			"tools":[
+				{
+					"name": "connect",
+					"title":  "GODICE_ROLLS.Tools.AddDice",
+					"icon": 'fas fa-dice',
+					"onClick": () => {  console.log("Dice Manager Clicked"); connect();},
+					"button": true
+				},
+				{
+					"name": "disconnect",
+					"title":  "GODICE_ROLLS.Tools.DisconnectAll",
+					"icon": 'fas fa-trash',
+					"onClick": () => {  console.log("Disconnecting all dices"); disconnect();},
+					"button": true
+				}
+			],
+			"activeTool": "connect"
+		};
+		controls.push(diceManager);
+	}
 });
 
-Hooks.on('ready', Utils.LoadStoredInfos());
+Hooks.on('init', () => { 
+	Canvas.layers.dicemanager = { group: "interface", layerClass: DiceManagerLayer }; 
+});
+
+Hooks.on('ready', () => {
+	Utils.LoadStoredInfos();
+});
 
 GoDice.prototype.onDiceConnected = async (diceId, diceInstance) => {
 
@@ -44,12 +63,14 @@ GoDice.prototype.onDiceConnected = async (diceId, diceInstance) => {
 		diceInstance.setDieColor();
 		diceInstance.setBatteryLevel();
 		let dieType;
-		dieType = await DieTypePrompt.showTypePrompt(diceInstance);
+		let diePrompt = new DieTypePrompt();
+		dieType = await diePrompt.showTypePrompt(diceInstance);
 		if(!diceInstance.newConnection || dieType)
 		{
 			diceInstance.setDieType(dieType);
 			diceInstance.diceId = diceId;
 			connectedDice.set(diceId, diceInstance);
+			Utils.addControlDice(diceId, connectedDice);
 			Utils.saveDices(connectedDice);
 			console.log("Dice connected: ", diceId, diceInstance.getDieType(true), diceInstance.getDieColor(true));
 		}else{
@@ -59,6 +80,7 @@ GoDice.prototype.onDiceConnected = async (diceId, diceInstance) => {
 			Utils.saveDices(connectedDice);
 		}
 	}
+	Utils.connectedDice = connectdDice;
 };
 
 GoDice.prototype.onRollStart = (diceId) => {

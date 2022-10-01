@@ -32,6 +32,11 @@
 			"Legacy": "Inserisci un {0}d{1} roll da {0} a {2}",
 			"Legacy_Invalid": "(valore non valido, riprova)"
 		},
+		"Tools":{
+			"AddDice": "Aggiungi un GoDice",
+			"DisconnectAll": "Disconnetti tutti i dadi",
+			"diceManagerTitle": "Gestisci dadi GoDice"
+		},
 		"Tooltip": {
 			"RollTerm": "The Dice Term in the roll being requested.",
 			"DiceType": "Seleziona il tipo di dado da connettere.",

@@ -7,8 +7,8 @@ class Utils {
 
 	static saveDices(connectedDice) {
 		let diceToStore = [];
-		connectedDice.foreach(function(dieInstance, diceId) {
-			diceToStore.push(diceId+"|"+dieInstance,getDieType(true));
+		connectedDice.forEach(function(dieInstance, diceId) {
+			diceToStore.push(diceId+"|"+dieInstance.getDieType(true));
 		});
 		sessionStorage.setItem('connectedDice', JSON.stringify(diceToStore));
 	}
@@ -24,6 +24,10 @@ class Utils {
 		{
 			console.log("No dice connected");
 		}
+	}
+
+	static disconnectAll() {
+		disconnectAll(connectedDice);
 	}
 
 	static disconnectDice(connectedDice, diceId) {
@@ -148,6 +152,7 @@ class Utils {
 
 		if(Utils.isManualRollActive())
 		{
+			//let rollPrompts = await import('');
 			let diceRolls = document.querySelectorAll("[name^='"+id+"-']");
 			if(!diceRolls || diceRolls.length == 0)
 			{
@@ -196,6 +201,22 @@ class Utils {
 			{ 
 				console.log("Exp:", err);
 			}
+		}
+	}
+
+	static addControlDice(diceId, connectedDice)
+	{
+		let diceManager = new SceneControls().controls.find(c => c.name == "dicemanager");
+		if(diceManager)
+		{
+			let diceInstance = connectedDice.get(diceId);
+			diceManager.tools.push({
+				"name": diceId,
+				"title":  diceInstance.getDieType(true) + " - " + diceInstance.getDieColor(true),
+				"icon": 'fas fa-dice-'+diceInstance.getDieType(true).toLowerCase().replace("x",""),
+				"onClick": () => {  console.log("Dice " + diceId + " Clicked"); Utils.disconnect(connectedDice, diceId);},
+				"button": true
+			})
 		}
 	}
 }

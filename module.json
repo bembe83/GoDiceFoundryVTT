@@ -1,55 +1,64 @@
 {
-  "id:": "go-dice-module",
-  "name": "go-dice-module",
-  "title": "GoDice Module",
-  "version": "1.0.0",
-  "description": "A module to allow to play with real Go Dice dice with foundryVTT using Manual Roll module",
-  "authors": [ 
-    { 
-      "name":"Bembe83" 
-    } 
-  ],
-  "relationships": {
-    "requires": [
-      {
-        "id": "df-manual-rolls",
-        "type": "module",
-        "compatibility": {}
-      }
-    ]
-  },
-  "version": "1.0.0",
-  "minimumCoreVersion": "10.284",
-  "compatibleCoreVersion": "10",
-  "compatibility": {
-    "minimum": 9,
-    "verified": "10.284"
-  },
-  "languages": [
-      { 
-        "lang": "en", 
-        "name": "English", 
-        "path": "lang/en.json",
-        "flag":{}
-      },
-      { 
-        "lang": "it", 
-        "name": "Italiano", 
-        "path": "lang/it.json",
-        "flag": {}
-      }
-  ],
-  "scripts": [
-    "./scripts/GoDice.js",
-    "./scripts/Utils.js",
-    "./scripts/DieTypePrompt.js",
-    "./scripts/GoDiceExt.js",
-    "./scripts/DiceManagerLayer.js",
-    "./main.js"],
-  "styles": [ 
-    "styles/main.css" 
-  ],
-  "url": "https://github.com/bembe83/GoDiceFoundryVTT",
-  "manifest": "https://github.com/bembe83/GoDiceFoundryVTT/releases/download/V1.0.0/module.json",
-  "download": "https://github.com/bembe83/GoDiceFoundryVTT/releases/download/V1.0.0/GoDiceFoundryVTT_V1.0.0.zip"
+	"id:": "go-dice-module",
+	"name": "go-dice-module",
+	"title": "GoDice Module",
+	"version": "1.0.0",
+	"description": "A module to allow to play with real Go Dice dice with foundryVTT using Manual Roll module",
+	"authors": [
+		{
+			"name": "Bembe83"
+		}
+	],
+	"relationships": {
+		"requires": [
+			{
+				"id": "df-manual-rolls",
+				"type": "module",
+				"compatibility": {
+					
+				}
+			}
+		]
+	},
+	"version": "1.0.0",
+	"minimumCoreVersion": "10.284",
+	"compatibleCoreVersion": "10",
+	"compatibility": {
+		"minimum": 9,
+		"verified": "10.284"
+	},
+	"languages": [
+		{
+			"lang": "en",
+			"name": "English",
+			"path": "lang/en.json",
+			"flag": {
+				
+			}
+		},
+		{
+			"lang": "it",
+			"name": "Italiano",
+			"path": "lang/it.json",
+			"flag": {
+				
+			}
+		}
+	],
+	"scripts": [
+		"./scripts/GoDice.js",
+		"./scripts/Utils.js",
+		"./scripts/DieTypePrompt.js",
+		"./scripts/GoDiceExt.js",
+		"./scripts/DiceBar.js",
+		"./scripts/DiceBarPopulator.js",
+		"./main.js"
+	],
+	"styles": [
+		"styles/main.css",
+		"styles/dicebar.css"
+	],
+	"url": "https://github.com/bembe83/GoDiceFoundryVTT",
+	"manifest": "https://github.com/bembe83/GoDiceFoundryVTT/releases/download/V1.0.0/module.json",
+	"download": "https://github.com/bembe83/GoDiceFoundryVTT/releases/download/V1.0.0/GoDiceFoundryVTT_V1.0.0.zip"
 }

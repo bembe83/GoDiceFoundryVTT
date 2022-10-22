@@ -1,0 +1,19 @@
+<div id="dicebar" class="flexrow">
+    <div id="dicebar-directory-controls" class="bar-controls flexcol">
+        <a id="dicebar-toggle">
+            <i class="fas fa-caret-down"></i>
+        </a>
+    </div>
+    <nav id="dice-action-bar" class="flexrow {{barClass}}">
+        <ol id="dice-list" class="flexrow" data-page="{{page}}">
+            {{#each dice}}
+            <li class="dice {{this.cssClass}}" data-slot="{{this.customSlot}}" data-tooltip="{{this.tooltip}}"
+                {{#if this.diceId}}data-dice-id="{{this.diceId}}"{{/if}}>
+                {{#if this.img}}
+                <img class="dice-icon" src="{{this.img}}" style="background-color: {{this.dieColor}}"/>
+                {{/if}}
+            </li>
+            {{/each}}
+        </ol>
+    </nav>
+</div>

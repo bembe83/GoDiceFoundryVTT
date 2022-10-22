@@ -49,6 +49,10 @@
 			"Total_Pt1": "Totale da ",
 			"Total_Pt2": " a "
 		},
-		"InitiativeRollFlavour": "Roll Iniziativa per \"{{name}}\""
+		"InitiativeRollFlavour": "Roll Iniziativa per \"{{name}}\"",
+		"DiceBar": {
+			"EditType": "Cambia Tipo",
+			"RemoveDice": "Disconnetti"
+		}
 	}
 }

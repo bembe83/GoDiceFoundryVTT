@@ -123,6 +123,7 @@ class GoDiceExt extends GoDice {
 	onDisconnected(event) {
 		console.debug(event.target);
 		connectedDice.delete(event.target.id);
+		Utils.delDieFromBar(event.target.id);
 	}
 
 }

@@ -34,7 +34,9 @@
 			"Legacy_Invalid": "(invalid input, please try again)"
 		},
 		"Tools":{
-			"diceManagerTitle": "Handle Go Dice dice"
+			"AddDice": "Add a GoDice dice",
+			"DisconnectAll": "Disconnect all dice",
+			"diceManagerTitle": "Handle GoDice dice"
 		},
 		"Tooltip": {
 			"RollTerm": "The Dice Term in the roll being requested.",
@@ -48,6 +50,10 @@
 			"Total_Pt1": "Total from ",
 			"Total_Pt2": " to "
 		},
-		"InitiativeRollFlavour": "Initiative Roll for \"{{name}}\""
+		"InitiativeRollFlavour": "Initiative Roll for \"{{name}}\"",
+		"DiceBar": {
+			"EditType": "Change Type",
+			"RemoveDice": "Disconnect"
+		}
 	}
 }

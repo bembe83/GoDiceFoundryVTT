@@ -24,9 +24,11 @@
 		"Flag": "(goDice Roll)",
 		"Prompt": {
 			"DefaultTitle": "DiceType Request",
+			"DefaultRollTitle": "Roll Request",
 			"Header_DiceType": "Dice Type ",
 			"Header_Rolls": "Individual Rolls ",
-			"Header_Total": "Roll Total",
+			"Header_RollTerm": "Roll Term ",
+			"Header_Modifier": "Second Roll",
 			"Await_Roll": "Waiting roll of dice",
 			"Rolling": "Rolling...",
 			"RollResult": "Rolled {0}",
@@ -42,7 +44,7 @@
 			"RollTerm": "The Dice Term in the roll being requested.",
 			"DiceType": "Select the dice type to connect",
 			"Rolls": "Roll result for each individual requested roll.",
-			"Total": "Total value of combined dice to avoid entering the value for each die."
+			"Modifier": "Second roll in case of Advantage or Disadvantage"
 		},
 		"Submit": "Submit",
 		"Placeholder": {

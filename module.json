@@ -12,16 +12,16 @@
 	"relationships": {
 		"requires": [
 			{
-				"id": "df-manual-rolls",
+				"id": "lib-wrapper",
 				"type": "module",
 				"compatibility": {
-					
+					"verified": "1.12.10.0"
 				}
 			}
 		]
 	},
 	"version": "1.0.0",
-	"minimumCoreVersion": "10.284",
+	"minimumCoreVersion": "10.290",
 	"compatibleCoreVersion": "10",
 	"compatibility": {
 		"minimum": 9,
@@ -52,6 +52,8 @@
 		"./scripts/GoDiceExt.js",
 		"./scripts/DiceBar.js",
 		"./scripts/DiceBarPopulator.js",
+		"./scripts/GoDiceRoll.js",
+		"./scripts/GoDiceRollPrompt.js",
 		"./main.js"
 	],
 	"styles": [

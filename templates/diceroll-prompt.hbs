@@ -1,0 +1,31 @@
+<form id="roll_prompt">
+	<table>
+		<thead>
+			<th>{{localize "GODICE_ROLLS.Prompt.Header_RollTerm"}}
+				<a class="button" title="{{localize "GODICE_ROLLS.Tooltip.RollTerm"}}"><i class="fas fa-question-circle"></i></a>
+			</th>
+			<th>{{localize "GODICE_ROLLS.Prompt.Header_Rolls"}}
+				<a class="button" title="{{localize "GODICE_ROLLS.Tooltip.Rolls"}}"><i class="fas fa-question-circle"></i></a>
+			</th>
+		</thead>
+		<tbody>
+			{{#each terms}}
+			<tr class="d{{term.faces}}">
+				<td>{{faces}}</td>
+				<td>
+					<input class="dice" name="{{id}}-{{idx}}" type="number" min="1" max="{{term.faces}}" tabindex="1{{id}}{{idx}}"
+						step="1" placeholder="1-{{term.faces}}{{localize "GODICE_ROLLS.Placeholder.Roll"}}"></input>
+				</td>
+			</tr>
+			{{/each}}
+		</tbody>
+		<tfoot>
+			<tr>
+				<td colspan="3" style="padding:0">
+					<button type="submit" style="width:100%" name="submit" tabindex="300">
+						<i class="fas fa-dice-d20"></i>{{localize "GODICE_ROLLS.Submit"}}</button>
+				</td>
+			</tr>
+		</tfoot>
+	</table>
+</form>

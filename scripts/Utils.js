@@ -18,7 +18,7 @@ async function diceBarInit() {
 		renderData: "init"
 	};
 
-	game.settings.register("go-dice-module", "DiceBarDisabled", {
+	game.settings.register(MODULE_NAME, "DiceBarDisabled", {
 		config: true,
 		type: Boolean,
 		default: false,
@@ -30,7 +30,7 @@ async function diceBarInit() {
 	});
 
 	let diceDisplay = "flex";
-	if (game.settings.get("go-dice-module", "DiceBarDisabled") === true) {
+	if (game.settings.get(MODULE_NAME, "DiceBarDisabled") === true) {
 		console.debug('DiceBar | User disabled dice bar.');
 		diceDisplay = "none";
 	}
@@ -182,53 +182,40 @@ class Utils {
 
 		let flagAssigned = false;
 		let flagAllAssigned = false;
-		let id = 0;
 
-		if (Utils.isManualRollActive()) {
-			//let rollPrompts = await import('');
-			let diceRolls = document.querySelectorAll("[name^='" + id + "-']");
-			if (!diceRolls || diceRolls.length == 0) {
-				Hooks.once('RenderApplication', (RollPrompt, html, terms) =>{
-					
-				});
-				let r = new Roll("1" + dieType);
-				r.evaluate({ async: true });
-				diceRolls = document.querySelectorAll("[name^='" + id + "-']");
-			}
-
-			while (!flagAssigned || !flagAllAssigned || !diceRolls || diceRolls.length == 0) {
-				let dieRollTR = document.querySelectorAll("[name^='" + id + "-0']");
-				let dieLabel = dieRollTR ? dieRollTR[0].parentElement.previousElementSibling : null;
-				if (dieLabel && dieLabel.textContent.includes(dieType.toLowerCase())) {
-					for (let i = 0; i < diceRolls.length && !flagAssigned; i++) {
-						let dieRoll = diceRolls[i];
-						if (dieRoll.value == '' && !dieRoll.name.includes('total')) {
-							dieRoll.value = value;
-							dieRoll.style.color = dieColor;
-							flagAssigned = true;
-						}
-						if (flagAssigned && i == diceRolls.length - 1) {
-							let button = document.getElementsByName("submit")[0];
-							flagAllAssigned = true;
-							button.click();
-						}
+		if (GoDiceRoll.isEnabled()) {
+			let diceRollsPrompt = document.getElementByID("roll_prompt");
+			if (!diceRollsPrompt || diceRollsPrompt.length == 0) {
+				await Utils.rollSingleDie(dieType, value);
+			}else{
+				diceRolls = diceRollsPrompt.getElementById(dieType.toLowerCase());
+				for(let r=0;r<diceRolls.length && !flagAssigned; r++)
+				{
+					if(!diceRolls[0].getElementByClassName("dice")[0].value)
+					{
+						diceRolls[0].getElementByClassName("dice")[0].value = value;
+						flag_assigned = true;
 					}
 				}
-				id++;
-				diceRolls = document.querySelectorAll("[name^='" + id + "-']");
 			}
 		}
 		else {
-			let r = new Roll("1" + dieType);
-			await r.evaluate({ async: true });
-			try {
-				r.terms[0].results[0].result = value;
-				r._total = value;
-				r.toMessage();
-			}
-			catch (err) {
-				console.log("Exp:", err);
-			}
+			await Utils.rollSingleDie(dieType, value)
+		}
+	}
+	
+	static async rollSingleDie(dieType, value)
+	{	
+		let r = new Roll("1" + dieType);
+		r.isSingleRoll = true;
+		await r.evaluate({ async: true });
+		try {
+			r.terms[0].results[0].result = value;
+			r._total = value;
+			r.toMessage();
+		}
+		catch (err) {
+			console.log("Exp:", err);
 		}
 	}
 

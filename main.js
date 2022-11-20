@@ -1,3 +1,5 @@
+const MODULE_NAME = "go-dice-module";
+
 
 Hooks.on('init', () => {
 	if (document.querySelector('#loading') !== null) {
@@ -6,6 +8,7 @@ Hooks.on('init', () => {
 		dbEl.setAttribute('id', 'dicebar');
 		hbEl.insertAdjacentElement('afterend', dbEl);
 	}
+	GoDiceRoll.init();
 });
 
 Hooks.on("renderDiceBar", async () => {
@@ -13,9 +16,16 @@ Hooks.on("renderDiceBar", async () => {
 });
 
 Hooks.on('ready', () => {
+	if (!game.modules.get('lib-wrapper')?.active && game.user.isGM) {
+		ui.notifications.error(game.i18n.localize(MODULE_NAME+".Error_libWrapper_Missing"));
+		return;
+	}
+	
+	console.debug("Installing GoDiceRoll")
+	GoDiceRoll.patch();
 	Utils.LoadStoredInfos();
 	console.debug("DiceBar | Foundry setup...");
-	diceBarInit();
+	diceBarInit();	
 });
 
 GoDice.prototype.onDiceConnected = async (diceId, diceInstance) => {

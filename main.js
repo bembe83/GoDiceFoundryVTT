@@ -2,12 +2,7 @@ const MODULE_NAME = "go-dice-module";
 
 
 Hooks.on('init', () => {
-	if (document.querySelector('#loading') !== null) {
-		let hbEl = document.querySelector('#loading');
-		let dbEl = document.createElement('template');
-		dbEl.setAttribute('id', 'dicebar');
-		hbEl.insertAdjacentElement('afterend', dbEl);
-	}
+	DiceBar.init();
 	GoDiceRoll.init();
 });
 
@@ -21,7 +16,7 @@ Hooks.on('ready', () => {
 		return;
 	}
 	
-	console.debug("Installing GoDiceRoll")
+	console.debug("Installing GoDiceRoll");
 	GoDiceRoll.patch();
 	Utils.LoadStoredInfos();
 	console.debug("DiceBar | Foundry setup...");
@@ -62,20 +57,20 @@ GoDice.prototype.onRollStart = (diceId) => {
 
 GoDice.prototype.onStable = (diceId, value, xyzArray) => {
 	console.log("Stable Roll:", diceId, value, xyzArray);
-	Utils.showRoll(diceId, value, "Stable");
+	Utils.startTimeout(diceId, value, "Stable");
 };
 
 GoDice.prototype.onTiltStable = (diceId, value, xyzArray) => {
 	console.log("TiltStable Roll:", diceId, value, xyzArray);
-	Utils.showRoll(diceId, value, "TiltStable");
+	Utils.startTimeout(diceId, value, "TiltStable");
 };
 
 GoDice.prototype.onFakeStable = (diceId, value, xyzArray) => {
 	console.log("FakeStable Roll:", diceId, value, xyzArray);
-	Utils.showRoll(diceId, value, "FakeStable");
+	Utils.startTimeout(diceId, value, "FakeStable");
 };
 
 GoDice.prototype.onMoveStable = (diceId, value, xyzArray) => {
 	console.log("MoveStable Roll:", diceId, value, xyzArray);
-	Utils.showRoll(diceId, value, "MoveStable");
+	Utils.startTimeout(diceId, value, "MoveStable");
 };

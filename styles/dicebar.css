@@ -28,6 +28,7 @@
   pointer-events: none;
   flex-wrap: nowrap;
   margin-bottom: 10px;
+  margin-bottom: 10px;
   position: absolute;
   display: var(--dicebar-display);
   bottom: var(--dicebar-y-pos);  
@@ -36,7 +37,7 @@
 #dicebar .bar-controls {
   flex: 0 0 32px;
   height: 100%;
-  margin: 0 2px;
+  margin: 0;
   text-align: center;
   color: var(--color-text-light-heading);
   background: var(--dicebar-primaryColor);
@@ -262,8 +263,8 @@ div#dicebar-settings-form h2 {
 /* ---------------------------------------- */
 @media (max-width: 1120px) {
   #dicebar {
-    width: calc(var(--dicebar-height) / 2);
-    height: calc(var(--dicebar-height) * 2);
+    width: calc(var(--dicebar-width) / 2);
+    height: calc(var(--dicebar-height));
   }
 
   #dicebar #dice-list {

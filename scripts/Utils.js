@@ -1,5 +1,6 @@
 const connectedDice = new Map();
 const rolledDice = new Map();
+var rollTimer ;
 
 async function diceBarInit() {
 
@@ -137,21 +138,21 @@ class Utils {
 			var myActor = game.actors.getName(name);
 			if (myToken) {
 				mySpeaker = ChatMessage.getSpeaker({ token: myToken });
-				speakerTypeMessage = "[GoDice] Owned token with name " + name + " found, using for chat message."
+				speakerTypeMessage = "[GoDiceRoll] Owned token with name " + name + " found, using for chat message."
 			} else if (myScene && myActor) {
 				mySpeaker = ChatMessage.getSpeaker({ scene: myScene, actor: myActor });
-				speakerTypeMessage = "[GoDice] Actor with name " + name + " found, using for chat message."
+				speakerTypeMessage = "[GoDiceRoll] Actor with name " + name + " found, using for chat message."
 			} else {
 				mySpeaker = ChatMessage.getSpeaker({ user: game.user });
 				mySpeaker.alias = event.name;
-				speakerTypeMessage = "[GoDice] No token or actor with name " + name + " found, using player with alias for chat message."
+				speakerTypeMessage = "[GoDiceRoll] No token or actor with name " + name + " found, using player with alias for chat message."
 			}
 		}
 		//If no name is given, get the user's default speaker.
 		if (!mySpeaker) {
 			mySpeaker = ChatMessage.getSpeaker({ user: game.user })
 		}
-		console.log("[GoDice] Received external dice roll with alias " + name + ".");
+		console.log("[GoDiceRoll] Received external dice roll with alias " + name + ".");
 		console.log(speakerTypeMessage);
 		return mySpeaker;
 	}
@@ -159,7 +160,7 @@ class Utils {
 	static showRoll(diceId, value, rollEvent) {
 		let diceInstance = connectedDice.get(diceId);
 		if (game)
-			Utils.showRollVTT(diceId, value, rollEvent);
+			Utils.showRollsVTT();
 		else {
 			let rollitem = document.getElementById('roll');
 			if (!rollitem) {
@@ -173,50 +174,102 @@ class Utils {
 		}
 	}
 
-	static async showRollVTT(diceId, value, rollEvent) {
-		let dieType = connectedDice.get(diceId).getDieType(true);
-		let dieColor = connectedDice.get(diceId).getDieColor(true);
-		//let dieFaces = parseInt(dieType.replace("D", "").replace("X","0"));
-
-		console.log(rollEvent + " event: ", dieType, dieColor, value);
+	static async showRollsVTT() {
 
 		let flagAssigned = false;
-		let flagAllAssigned = false;
+		//let flagAllAssigned = false;
 
 		if (GoDiceRoll.isEnabled()) {
-			let diceRollsPrompt = document.getElementByID("roll_prompt");
+			let diceRollsPrompt = document.querySelectorAll("#roll_prompt");
 			if (!diceRollsPrompt || diceRollsPrompt.length == 0) {
-				await Utils.rollSingleDie(dieType, value);
+				Utils.rollDice();
 			}else{
-				diceRolls = diceRollsPrompt.getElementById(dieType.toLowerCase());
+				diceRolls = diceRollsPrompt[0].getElementByClassName(dieType.toLowerCase());
+				if(!diceRolls || diceRolls.length == 0)
+				{
+					console.log("No roll required for the type "+dieType.toLowerCase());
+					return;
+				}
 				for(let r=0;r<diceRolls.length && !flagAssigned; r++)
 				{
-					if(!diceRolls[0].getElementByClassName("dice")[0].value)
+					if(!diceRolls[c].getElementByClassName("dice")[0].value)
 					{
-						diceRolls[0].getElementByClassName("dice")[0].value = value;
+						diceRolls[c].getElementByClassName("dice")[0].value = value;
 						flag_assigned = true;
 					}
 				}
 			}
 		}
 		else {
-			await Utils.rollSingleDie(dieType, value)
+			Utils.rollDice()
 		}
+	}
+	
+	static startTimeout(diceId, value, rollEvent){
+		if(rollTimer)
+			clearTimeout(rollTimer);
+		let bar = document.querySelectorAll("#round-time-bar");
+		bar[0].classList.remove("round-time-bar");
+		bar[0].offsetWidth;
+		
+		let dieType = connectedDice.get(diceId).getDieType(true);
+		let dieColor = connectedDice.get(diceId).getDieColor(true);
+		
+		console.log(rollEvent + " event: ", dieType, dieColor, value);
+		
+		let dieFaces = parseInt(dieType.replace("D", "").replace("X","0"));
+		let die = rolledDice.get(dieType);
+		if(die){
+			die.number = die.number + 1;
+		}else{
+			die = new Die({number:1, faces:dieFaces});	
+		}
+		die.results.push({result:value, active:true});
+		rolledDice.set(dieType,die);
+		rollTimer = setTimeout(()=>{Utils.showRollsVTT()}, GoDiceRoll.ROLLED_TIMEOUT);
+		bar[0].classList.add("round-time-bar");
 	}
 	
 	static async rollSingleDie(dieType, value)
 	{	
-		let r = new Roll("1" + dieType);
+		let modif = (godiceroll_modifier>0?("+"+godiceroll_modifier.toString()):(godiceroll_modifier.toString()));
+		let r = new Roll("1" + dieType + modif);
 		r.isSingleRoll = true;
 		await r.evaluate({ async: true });
 		try {
 			r.terms[0].results[0].result = value;
-			r._total = value;
-			r.toMessage();
+			r._total = r._evaluateTotal();
+			r.toMessage({flavor:"<b style =\"font-size:1.5em\">GoDiceRoll</b>"});
 		}
 		catch (err) {
 			console.log("Exp:", err);
 		}
+	}
+	
+	static rollDice()
+	{	
+		let plus = new OperatorTerm({operator: "+"});
+		let terms=[];
+		
+		rolledDice.forEach(async(die, diceId) => {
+			console.debug("Evaluate terms for ", diceId, " dice");
+			await die.evaluate();
+			die.results.splice(-1*die.number, dice.number);
+			if(terms.length>0)
+				terms.push(plus);
+			terms.push(die);
+		});
+		if(godiceroll_modifier>0)
+		{
+			terms.push(plus);
+			terms.push(new NumericTerm({number:godiceroll_modifier}));
+		}else if(godiceroll_modifier<0){
+			terms.push(new NumericTerm({number:godiceroll_modifier}));
+		}
+		
+		let r = Roll.fromTerms(terms);
+		r.isSingleRoll = true;
+		r.toMessage({flavor:"<b style =\"font-size:1.5em\">GoDiceRoll</b>"});
 	}
 
 	static async addDieToBar(diceId) {

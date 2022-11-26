@@ -1,5 +1,14 @@
 
 class DiceBar extends Hotbar {
+	
+	static init(){
+		if (document.querySelector('#loading') !== null) {
+			let hbEl = document.querySelector('#loading');
+			let dbEl = document.createElement('template');
+			dbEl.setAttribute('id', 'dicebar');
+			hbEl.insertAdjacentElement('afterend', dbEl);
+		}
+	}
 	/**
 	 * @param {DiceBarPopulator} populator
 	 * @param {*} options 

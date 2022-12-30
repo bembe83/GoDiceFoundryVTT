@@ -1,3 +1,4 @@
+!.gitignore
 *.zip
 **/node_modules/
 **/dist/
@@ -8,3 +9,5 @@
 *foundry-reference*
 .DS_Store
 *.sh
+.*
+

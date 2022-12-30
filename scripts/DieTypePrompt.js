@@ -5,7 +5,7 @@
 class DieTypePrompt {
 	async showTypePrompt(diceInstance) {
 		let diceType = null;
-		if (diceInstance.newConnection) {
+		if (diceInstance) {
 			//Show popup to select the dice Type
 			if (game) {
 				let modulePath = Utils.getModulePath();
@@ -39,14 +39,11 @@ class DieTypePrompt {
 					console.log("Selected Dice Type:", diceType);
 				}
 				else
-					console.log("Error retrieving Dice Type");
+					console.log("Error retrieving Die Type");
 			}
 			else
-				diceType = window.prompt("Insert dice Type", "D6");
-		} else {
-			diceType = diceInstance.getDieType(true);
-		}
-
+				diceType = window.prompt("Insert die type", "D6");
+		} 
 		return diceType;
 	}
 

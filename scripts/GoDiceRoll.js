@@ -2,6 +2,7 @@
  * 
  */
  let godiceroll_modifier=0;
+ let advdis_modifier="";
  GODICE_ENABLED = "GoDiceEnabled";
  ROLLED_TIMEOUT = 5000;
  
@@ -22,7 +23,7 @@
 			let hbEl = document.querySelector('#loading');
 			let dbEl = document.createElement('div');
 			dbEl.id = 'round-time-bar';
-			//dbEl.setAttribute('class', 'round-time-bar');
+			dbEl.setAttribute('class', 'round-time-bar');
 			dbEl.style="--duration:"+(ROLLED_TIMEOUT/1000)+";";
 			dbEl.setAttribute("data-style", "smooth");
 			dbEl.appendChild(document.createElement('div'));
@@ -57,8 +58,9 @@
 		
 	    // Creating the span element which will show the modifier's value
 	    let rangeValue = document.createElement("span");
-	    rangeValue.style = "position: absolute; text-align: center; margin: 5px 5px; bottom: 0px; width: 35px; color: black;"+
-	    				   "background-color: rgba(0, 0, 0, 0);background-image: url('/ui/parchment.jpg'); border: 1px solid rgb(0, 0, 0);";
+	    rangeValue.style = "/*position: absolute;*/ text-align: center; margin: 5px 5px; bottom: 0px; width: 35px; color: black;"+
+	    				   "background-color: rgba(0, 0, 0, 0);background-image: url('/ui/parchment.jpg'); border: 1px solid rgb(0, 0, 0);"+
+						   "height: fit-content;";
 	    rangeValue.textContent = "0";
 	
 	    // Number range slider to pick modifier
@@ -69,20 +71,48 @@
 	    rangeElement.max   = "15";
 	    rangeElement.value = "0";
 	    rangeElement.title = "GoDiceRoll Modifier";
-	    rangeElement.style = "margin-left: 35px; margin-right: 5px; border: 0px; width: 175px";
+	    rangeElement.style = "margin-left: 15px; margin-right: 5px; border: 0px; width: 175px";
 	
 	    rangeElement.addEventListener('input', () => {
 	        rangeValue.textContent = rangeElement.value;
 	        godiceroll_modifier = parseInt(rangeElement.value);
 	    });
+		
+		let advButton = document.createElement("button");
+		advButton.textContent = "Adv";
+		advButton.id ="advButton";
+		advButton.value = "kh";
+		advButton.addEventListener('click', () => {
+			let disButton = document.getElementById('disButton');
+			this.classList.toggle('die-btn-active');
+			if(disButton.classList.contains('die-btn-active'))
+				disButton.classList.remove('die-btn-active');
+		});
+		
+		let disButton = document.createElement("button");
+		disButton.textContent = "Dis";
+		disButton.id = "disButton";
+		disButton.value = "kl";
+		disButton.addEventListener('click', () => {
+			let advButton = document.getElementById('advButton');
+			this.classList.toggle('die-btn-active');
+			if(advButton.classList.contains('die-btn-active'))
+				advButton.classList.remove('die-btn-active');
+		});
+		
+		let advdivElement = document.createElement("div");
+		advdivElement.style ="display: grid;width: 35px;";
+		advdivElement.appendChild(advButton);
+		advdivElement.appendChild(disButton);
 	
 	    // Container for the slider and value
 	    let rangeContainer = document.createElement("div");
-	    rangeContainer.style = "position: relative; flex: 10px 10px 286px";
+	    rangeContainer.style = "position: relative; display:flex;align-items: center;";
 	    rangeContainer.id="godiceroll-modifier"
 	    rangeContainer.title = "GoDice Modifier";
 	    rangeContainer.appendChild(rangeElement);
 	    rangeContainer.appendChild(rangeValue);
+		rangeContainer.appendChild(advdivElement);
 	
 	    // Adding elements to chat controls
 	    chatControls.appendChild(rangeContainer);

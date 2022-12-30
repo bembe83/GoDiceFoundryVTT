@@ -1,3 +1,6 @@
+const connectedDice = new Map();
+const disconnectedDice = new Map();
+const rolledDice = new Map();
 /**
  * @class
  * The extended GoDice class that can be used to connect a new die, send and recieve messages.
@@ -7,7 +10,9 @@ class GoDiceExt extends GoDice {
 	dieColor = this.diceColour.BLACK;
 	dieBatteryLevel = 0;
 	newConnection = true;
-
+	dieFaces = 6;
+	reconnect = true;
+	
 	getDieType (needString = false) {
 		if(needString)
 			return Object.keys(GoDice.diceTypes)[this.dieType];
@@ -19,7 +24,20 @@ class GoDiceExt extends GoDice {
 		if(isNaN(dieType))
 			this.dieType = GoDice.diceTypes[dieType];
 		else
-			this.dieType = dieType; 
+			this.dieType = dieType;
+		this.setDieFaces();
+	}
+	
+	setDieFaces(dieFaces = null){
+		if(!dieFaces)
+			this.dieFaces = parseInt(this.getDieType(true).replace("D", "").replace("X","0"));
+		else
+			this.dieFaces = dieFaces;
+	}
+	
+	getDieFaces()
+	{
+		return this.dieFaces;
 	}
 
 	getDieColor (needString = false) {
@@ -97,33 +115,37 @@ class GoDiceExt extends GoDice {
 	}
 
 	/**
-	 * Open a connection dialog to connect a single GoDice, after successfull connection it will follow by corresponding "DiceConnected" event (response).
+	 * Try to reconnect a previous connected GoDice, after successfull connection it will follow by corresponding "DiceConnected" event (response).
 	 */
-	reconnectDevice (dieId, dieType) {
-		if (!dieId) {
-			return Promise.reject(new Error('No device ID available, use requestDevice instead.'));
+	async reconnectDevice (dieId = null, dieType = 1) {
+		this.newConnection = false;
+		if(this.bluetoothDevice)
+		{
+			return this.connectDeviceAndCacheCharacteristics();
 		}
-		return navigator.bluetooth.getDevices()
-			.then(devices => {	
-				for(const device of devices)
+		if(dieId)
+		{
+			this.diceId = dieId;
+			this.setDieType(dieType);
+		}
+		
+		if (!this.diceId) {		
+			console.debug(this);
+			return Promise.reject(new Error('reconnectDevice (dieId, dieType) => No device ID provided, use requestDevice instead.'));
+		}
+		
+		return navigator.bluetooth.getDevices().then(devices => {	
+			for(const device of devices)
+			{
+				if(device.id == this.diceId)
 				{
-					if(device.id == this.dieId)
-					{
-						this.GlobalDeviceId = device.id.toString();				
-						this.bluetoothDevice = device;
-						this.newConnection = false;	
-						this.setDieType(dieType);			
-						this.bluetoothDevice.addEventListener('gattserverdisconnected', this.onDisconnected);				
-						this.reConnectDeviceAndCacheCharacteristics();
-					}	
-				}			
-			});
+					this.GlobalDeviceId = device.id.toString();				
+					this.bluetoothDevice = device;
+					this.newConnection = false;			
+					this.bluetoothDevice.addEventListener('gattserverdisconnected', this.onDisconnected);				
+					this.reConnectDeviceAndCacheCharacteristics();
+				}	
+			}			
+		});
 	}
-
-	onDisconnected(event) {
-		console.debug(event.target);
-		connectedDice.delete(event.target.id);
-		Utils.delDieFromBar(event.target.id);
-	}
-
 }

@@ -1,6 +1,10 @@
+:root{
+	--batterylevel: 100%;
+	--barcolor: green;
+}
+
 .diceTypes
 {
-	height: ;
 	display:  flex;
 	align-items: center;
 	justify-content: center;
@@ -35,6 +39,13 @@
 	background-color: green;
 }
 
+.battery_bar
+{
+	margin: 0.1rem;
+	height: 2px;
+	width: var(--batterylevel);
+}
+
 .round-time-bar {
   margin: 0.5rem;
   overflow: hidden;
@@ -63,5 +74,10 @@
   to {
     transform: scaleX(0);
   }
+}
+
+.die-btn-active {
+    background: url('/ui/denim.jpg');
+    color: antiquewhite;
 }
 

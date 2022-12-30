@@ -1,4 +1,4 @@
-<form id="roll_prompt">
+<form id="roll_prompt" data-counter={{terms.length}} >
 	<table>
 		<thead>
 			<th>{{localize "GODICE_ROLLS.Prompt.Header_RollTerm"}}
@@ -14,7 +14,8 @@
 				<td>{{faces}}</td>
 				<td>
 					<input class="dice" name="{{id}}-{{idx}}" type="number" min="1" max="{{term.faces}}" tabindex="1{{id}}{{idx}}"
-						step="1" placeholder="1-{{term.faces}}{{localize "GODICE_ROLLS.Placeholder.Roll"}}"></input>
+						step="1" placeholder="1-{{term.faces}}{{localize "GODICE_ROLLS.Placeholder.Roll"}}" 
+						onchange="Utils.rollFieldUpdate(this)"></input>
 				</td>
 			</tr>
 			{{/each}}

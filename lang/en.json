@@ -55,7 +55,8 @@
 		"InitiativeRollFlavour": "Initiative Roll for \"{{name}}\"",
 		"DiceBar": {
 			"EditType": "Change Type",
-			"RemoveDice": "Disconnect"
+			"RemoveDice": "Disconnect die",
+			"AddDice":"Connect new die"
 		}
 	}
 }

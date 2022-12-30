@@ -1,3 +1,42 @@
+async function diceBarInit() {
+
+	console.log("DiceBar | Initializing...");
+	ui.dicebar = new DiceBar();
+	let obj = {
+		enabled: true,
+		left: 100,
+		top: 100,
+		width: 502,
+		height: 52,
+		scale: 1.0,
+		log: true,
+		renderContext: "dicebar",
+		renderData: "init"
+	};
+
+	game.settings.register(MODULE_NAME, "DiceBarDisabled", {
+		config: true,
+		type: Boolean,
+		default: false,
+		name: game.i18n.localize('Disable DiceBar'),
+		hint: game.i18n.localize('Disable Dice Bar'),
+		onChange: value => {
+			console.debug(`Is the DiceBar disabled? ${value}`)
+		}
+	});
+
+	let diceDisplay = "flex";
+	if (game.settings.get(MODULE_NAME, "DiceBarDisabled") === true) {
+		console.debug('DiceBar | User disabled dice bar.');
+		diceDisplay = "none";
+	}
+
+	let r = document.querySelector(':root');
+	r.style.setProperty('--dicebar-display', diceDisplay);
+	Utils.setDiceBarMaxSlots();
+
+	ui.dicebar.render(true, obj);
+}
 
 class DiceBar extends Hotbar {
 	
@@ -10,10 +49,9 @@ class DiceBar extends Hotbar {
 		}
 	}
 	/**
-	 * @param {DiceBarPopulator} populator
 	 * @param {*} options 
 	 */
-	constructor(populator, options) {
+	constructor(options) {
 		super(options);
 		if (!game.macros.apps.find((app) => app.constructor.name == "DiceBar")) game.macros.apps.push(this);
 		/**
@@ -37,7 +75,6 @@ class DiceBar extends Hotbar {
 		 */
 		this._hover = null;
 
-		this.populator = populator;
 	}
 
 	/** @override */
@@ -72,20 +109,14 @@ class DiceBar extends Hotbar {
 	 * @private
 	 */
 	_getDiceByPage(page) {
-		const dice = this.getDiceBarDice(page);
-		let imgFolder = Utils.getModulePath() + "images/";
-		for (let [i, d] of Object.entries(dice)) {
-			let isDice = d.die instanceof GoDiceExt;
-			let dieType = isDice ? d.die.getDieType(true).replace("X", "") : "";
-			let dieColor = isDice ? d.die.getDieColor(true) : "";
-			d.customSlot = parseInt(i) < 9 ? parseInt(i) + 1 : 0;
-			d.cssClass = isDice ? "active" : "inactive";
-			d.icon = isDice ? 'fas fa-dice-' + dieType.toLowerCase() : null;
-			d.img = isDice ? imgFolder + dieType + ".webp" : imgFolder + "plus.webp";
-			d.dieColor = dieColor;
-			d.diceId = isDice ? d.die.diceId : "";
-			d.tooltip = isDice ? dieType + " - " + dieColor : "GODICE_ROLLS.Tools.AddDice";
-		}
+		const dice = [];
+		let i = 0;
+		connectedDice.forEach((die) => {
+			dice.push(this.getDiceBarItem(die,i));
+			i++;
+		});
+		dice.push(this.getDiceBarItem(new Object(),i));
+		Utils.setDiceBarMaxSlots();
 		return dice;
 	}
 
@@ -94,60 +125,23 @@ class DiceBar extends Hotbar {
 	* @param {number} page     The dicebar page number
 	* @return {Array.<Object>}
 	*/
-	getDiceBarDice(page = 1) {
-		let maxslots = parseInt(getComputedStyle(document.documentElement).getPropertyValue("--dicebar-slots"));;
-		const dice = Array.fromRange(maxslots).map(d => new Object());
-		for (let [k, v] of Object.entries(this.populator.diceMap)) {
-			dice[parseInt(k) - 1] = connectedDice.get(v);
-		}
-		const start = (page - 1) * maxslots;
-		return dice.slice(start, start + maxslots).map((d, i) => {
-			return {
-				slot: start + i + 1,
-				die: d
-			};
-		});
+	getDiceBarItem(die, i) {
+		let imgFolder = Utils.getModulePath() + "images/";
+		let isDice = die instanceof GoDiceExt || die instanceof GoDice;
+		let dieType = isDice ? die.getDieType(true).replace("X", "") : "";
+		let dieColor = isDice ? die.getDieColor(true) : "";
+		let d = new Object();
+		
+		d.customSlot = parseInt(i) < 9 ? parseInt(i) + 1 : 0;
+		d.cssClass = isDice ? "active" : "inactive";
+		d.icon = isDice ? 'fas fa-dice-' + dieType.toLowerCase() : 'fas fa-plus';
+		d.img = isDice ? imgFolder + dieType + ".webp" : imgFolder + "plus.webp";
+		d.dieColor = isDice? dieColor : "";
+		d.diceId = isDice ? die.diceId : "";
+		d.tooltip = isDice ? dieType + " - " + dieColor : "GODICE_ROLLS.Tools.AddDice";
+		
+		return d;
 	}
-
-	/**
-	* Assign a Dice to a numbered DiceBar slot between 1 and 10
-	* @param  {GoDiceExt|null} dice  The Dice entity to assign
-	* @param  {number} slot       The integer Hotbar slot to fill
-	* @param  {number} [fromSlot] An optional origin slot from which the Macro is being shifted
-	* @return {Promise}          A Promise which resolves once the User update is complete
-	*/
-	async assignDiceBarDice(dice, slot, { fromSlot = null } = {}) {
-		console.debug("DiceBar | assignDiceBarDice: dice", dice);
-		console.debug("DiceBar | assignDiceBarDice: slot", slot);
-		console.debug("DiceBar | assignDiceBarDice: fromSlot", fromSlot);
-
-		if (!(dice instanceof GoDiceExt || dice instanceof GoDice) && (dice !== null)) throw new Error("Invalid Dice provided");
-
-		// If a slot was not provided, get the first available slot
-		let maxslots = parseInt(connectedDice.size) + 1 || parseInt(getComputedStyle(document.documentElement).getPropertyValue("--dicebar-slots"));
-		let freeslots = ui.dicebar.dice.filter(d => { return d.diceId === "" });
-		let freeslot = freeslots && freeslots.length > 0 ? freeslots[0].slot : null
-		slot = slot ? parseInt(slot) : parseInt(freeslot);
-		if (!slot) throw new Error("No available DiceBar slot exists");
-		if (slot < 1 || slot > maxslots) throw new Error("Invalid DiceBar slot requested");
-
-		// Update the hotbar data
-		if (dice) {
-			console.debug("DiceBar | Setting dice with ID: ", dice.diceId, "to slot:", slot);
-			await this.populator.setDie(dice.diceId, slot);
-		}
-		else {
-			console.debug('DiceBar | Unsetting dice from slot:', slot);
-			await this.populator.unsetDie(slot);
-		}
-
-		Utils.setDiceBarMaxSlots();
-		this.dice = this._getDiceByPage(this.page);
-		ui.dicebar.render();
-		//code suggested by tposney. creates hook to allow reassignment of monkey hotpatch
-		Hooks.callAll("DiceBarAssignComplete");
-		return ui.dicebar.render();
-	};
 
 	/* -------------------------------------------- */
 	/**
@@ -194,14 +188,15 @@ class DiceBar extends Hotbar {
 
 	/** @inheritdoc */
 	_contextMenu(html) {
-		ContextMenu.create(this, html, ".dice", this._getEntryContextOptions());
+		ContextMenu.create(this, html, ".dice.active", this._getEntryContextOptions());
+		ContextMenu.create(this, html, ".dice.inactive", this._getEntryContextEmptyOptions());
 	}
 
 	/* -------------------------------------------- */
 
 	/**
-	 * Get the Macro entry context options
-	 * @returns {object[]}  The Macro entry context options
+	 * Get the Dice entry context options
+	 * @returns {object[]}  The Dice entry context options
 	 * @private
 	 */
 	_getEntryContextOptions() {
@@ -210,10 +205,13 @@ class DiceBar extends Hotbar {
 				name: "GODICE_ROLLS.DiceBar.EditType",
 				icon: '<i class="fas fa-edit"></i>',
 				callback: async li => {
-					let diceInstance = connectedDice.get(this.populator.diceMap[li.data("slot")]);
+					let diceInstance = connectedDice.get(li.data("diceId"));
 					let diePrompt = new DieTypePrompt();
-					dieType = await diePrompt.showTypePrompt(diceInstance);
-					diceInstance.setDieType(dieType);
+					let dieType = await diePrompt.showTypePrompt(diceInstance);
+					if(dieType)
+						diceInstance.setDieType(dieType);
+					else
+						console.log("Error retrieving die type.", diceInstance);
 					this.render();
 				}
 			},
@@ -221,7 +219,24 @@ class DiceBar extends Hotbar {
 				name: "GODICE_ROLLS.DiceBar.RemoveDice",
 				icon: '<i class="fas fa-trash"></i>',
 				callback: async li => {
-					Utils.disconnectDice(this.populator.diceMap[li.data("slot")]);
+					Utils.disconnectDice(li.data("diceId"));
+				}
+			},
+		];
+	}
+	
+		/**
+	 * Get the Dice entry context options
+	 * @returns {object[]}  The Dice entry context options
+	 * @private
+	 */
+	_getEntryContextEmptyOptions() {
+		return [
+			{
+				name: "GODICE_ROLLS.DiceBar.AddDice",
+				icon: '<i class="fas fa-plus"></i>',
+				callback: async li => {
+					Utils.openConnectionDialog();
 				}
 			},
 		];
@@ -267,15 +282,15 @@ class DiceBar extends Hotbar {
 		event.preventDefault();
 		const li = event.currentTarget;
 
-		// Case 1 - create a new Macro
+		// Case 1 - connect a new die
 		if (li.classList.contains("inactive")) {
 			Utils.openConnectionDialog();
 		}
 
-		// Case 2 - trigger a Macro
+		// Case 2 - make die blink
 		else {
-			const die = connectedDice.get(this.populator.diceMap[li.dataset.slot]);
-			die.pulseLed(5, 5, 5, [0, 0, 255]);
+			const die = connectedDice.get(li.dataset.diceId);
+			die?die.pulseLed(5, 5, 5, [0, 0, 255]):"";
 		}
 	}
 }

@@ -51,10 +51,9 @@
 		"./scripts/DieTypePrompt.js",
 		"./scripts/GoDiceExt.js",
 		"./scripts/DiceBar.js",
-		"./scripts/DiceBarPopulator.js",
 		"./scripts/GoDiceRoll.js",
 		"./scripts/GoDiceRollPrompt.js",
-		"./main.js"
+		"./scripts/main.js"
 	],
 	"styles": [
 		"styles/main.css",

@@ -10,7 +10,7 @@
             <li class="dice {{this.cssClass}}" data-slot="{{this.customSlot}}" data-tooltip="{{this.tooltip}}"
                 {{#if this.diceId}}data-dice-id="{{this.diceId}}"{{/if}}>
                 {{#if this.img}}
-                <img class="dice-icon" src="{{this.img}}" style="background-color: {{this.dieColor}}"/>
+                <img class="dice-icon" src="{{this.img}}" {{#if this.dieColor}}style="background-color: {{this.dieColor}}"{{/if}}/>
                 {{/if}}
             </li>
             {{/each}}

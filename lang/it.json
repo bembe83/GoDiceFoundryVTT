@@ -54,7 +54,8 @@
 		"InitiativeRollFlavour": "Lancio iniziativa per \"{{name}}\"",
 		"DiceBar": {
 			"EditType": "Cambia Tipo",
-			"RemoveDice": "Disconnetti"
+			"RemoveDice": "Disconnetti dado",
+			"AddDice": "Connetti nuovo dado"
 		}
 	}
 }

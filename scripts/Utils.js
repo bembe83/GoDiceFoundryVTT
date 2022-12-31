@@ -149,9 +149,7 @@ class Utils {
 	}
 
 	static handleRoll(diceId, value, rollEvent) {
-		if(rollTimer)
-			clearTimeout(rollTimer);
-			
+	
 		let dieType  = connectedDice.get(diceId).getDieType(true);
 		let dieColor = connectedDice.get(diceId).getDieColor(true);
 		let dieFaces = connectedDice.get(diceId).getDieFaces();
@@ -220,7 +218,10 @@ class Utils {
 		if(die){
 			die.number = die.number + 1;
 		}else{
-			die = new Die({number:1, faces:dieFaces});	
+			if(advdis_modifier.length>0)
+				die = new Die({number:1, faces:dieFaces, modifiers:[advdis_modifier]});	
+			else
+				die = new Die({number:1, faces:dieFaces});
 		}
 		if(parseInt(value) < 0)
 			value = 1;
@@ -233,7 +234,7 @@ class Utils {
 		bar[0].classList.add("round-time-bar");
 		rollTimer = setTimeout(Utils.rollDice, ROLLED_TIMEOUT);
 	}
-	
+/*	
 	static async rollSingleDie(dieType, value) {	
 		let modif = (godiceroll_modifier>0?("+"+godiceroll_modifier.toString()):(godiceroll_modifier.toString()));
 		let r = new Roll("1" + dieType + modif);
@@ -248,7 +249,7 @@ class Utils {
 			console.log("Exp:", err);
 		}
 	}
-	
+*/
 	static rollDice() {	
 		let plus = new OperatorTerm({operator: "+"});
 		let terms=[];
@@ -256,8 +257,8 @@ class Utils {
 		plus._evaluated = true;
 		rolledDice.forEach((die, diceId) => {
 			console.debug("Evaluate terms for ", diceId, " dice");
+			die._evaluateModifiers();
 			die._evaluated = true;
-			//die.results.splice(-1*die.number, die.number);
 			if(terms.length>0)
 				terms.push(plus);
 			terms.push(die);

@@ -73,6 +73,11 @@ GoDice.prototype.onDisconnected = (event) => {
 };
 
 GoDice.prototype.onRollStart = (diceId) => {
+	if(rollTimer){
+		clearTimeout(rollTimer);
+		let bar = document.querySelectorAll("#round-time-bar");
+		bar[0].classList.remove("round-time-bar");
+	}
 	let diceType = connectedDice.get(diceId).getDieType(true);
 	let diceColor = connectedDice.get(diceId).getDieColor(true);
 	console.log("Roll Start: ", diceType, diceColor);

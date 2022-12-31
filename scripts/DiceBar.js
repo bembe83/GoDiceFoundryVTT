@@ -79,7 +79,7 @@ class DiceBar extends Hotbar {
 
 	/** @override */
 	static get defaultOptions() {
-		let templatePath = Utils.getModulePath() + "templates/dicebar.html";
+		let templatePath = Utils.getModulePath() + "templates/dicebar.hbs";
 		return mergeObject(super.defaultOptions, {
 			id: "dicebar",
 			template: templatePath,

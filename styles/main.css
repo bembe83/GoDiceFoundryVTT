@@ -46,6 +46,8 @@
 	width: var(--batterylevel);
 }
 
+/* Time Bar*/
+
 .round-time-bar {
   margin: 0.5rem;
   overflow: hidden;
@@ -76,8 +78,53 @@
   }
 }
 
-.die-btn-active {
-    background: url('/ui/denim.jpg');
+/*Chat Control Modifier*/
+.godiceroll-modifier {
+	position: relative; 
+	display: flex;
+	align-items: center;
+}
+
+.godiceroll-rangenumber {
+	margin-left: 0px; 
+	margin-right: 2px; 
+	border: 0px; 
+	width: 145px;
+}
+
+.godiceroll-span {
+	text-align: center; 
+	margin: 5px; 
+	bottom: 0px; 
+	width: 35px; 
+	color: black; 
+	background-color: rgba(0, 0, 0, 0); 
+	background-image: url('/ui/parchment.jpg'); 
+	border: 1px solid rgb(0, 0, 0); 
+	height: fit-content;
+}
+
+.godiceroll-advdis{
+	display: flex; 
+	width: 31px;
+}
+
+.godiceroll-advdis-btn {
+    background-image: url('/ui/parchment.jpg'); 
+    margin: 0px;
+    font-size: smaller;
+    height: 24px;
+    line-height: normal;
+}
+
+.godiceroll-advdis-btn:active, .godiceroll-advdis-btn.active {
+    background: #cc4d28;
     color: antiquewhite;
 }
+
+
+
+
+
+
 

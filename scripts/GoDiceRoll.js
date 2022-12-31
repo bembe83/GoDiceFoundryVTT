@@ -30,8 +30,9 @@
 			hbEl.insertAdjacentElement('afterend', dbEl);
 		}
 	}
-	
-	static injectModifier() {
+		
+	static async injectModifier() {
+				
 	    // Getting the chat controls div
 	    let chatControls = document.getElementById("chat-controls");
 	    
@@ -40,7 +41,7 @@
 			console.debug("'chat-controls' element not found");
 	    	return;
 		}
-		
+			
 		if(document.getElementById("godiceroll-modifier"))
 		{
 			console.debug("'godiceroll-modifier' already exists");
@@ -55,67 +56,32 @@
 	    	});
 	    	return;
 	    }
+			
+		let template = await renderTemplate(Utils.getModulePath() + "templates/chat_control_mod.hbs",{});
+		let modContainer = Utils.htmlToElement(template);
+		chatControls.appendChild(modContainer);
 		
-	    // Creating the span element which will show the modifier's value
-	    let rangeValue = document.createElement("span");
-	    rangeValue.style = "/*position: absolute;*/ text-align: center; margin: 5px 5px; bottom: 0px; width: 35px; color: black;"+
-	    				   "background-color: rgba(0, 0, 0, 0);background-image: url('/ui/parchment.jpg'); border: 1px solid rgb(0, 0, 0);"+
-						   "height: fit-content;";
-	    rangeValue.textContent = "0";
-	
-	    // Number range slider to pick modifier
-	    let rangeElement = document.createElement("input");
-	    rangeElement.type  = "range";
-	    rangeElement.id    = "rangenumber";
-	    rangeElement.min   = "-15";
-	    rangeElement.max   = "15";
-	    rangeElement.value = "0";
-	    rangeElement.title = "GoDiceRoll Modifier";
-	    rangeElement.style = "margin-left: 15px; margin-right: 5px; border: 0px; width: 175px";
-	
-	    rangeElement.addEventListener('input', () => {
+		let rangeElement = document.getElementById("rangenumber");
+		rangeElement.addEventListener('input', () => {
+			let rangeValue = document.getElementById("rangevalue");
 	        rangeValue.textContent = rangeElement.value;
 	        godiceroll_modifier = parseInt(rangeElement.value);
 	    });
-		
-		let advButton = document.createElement("button");
-		advButton.textContent = "Adv";
-		advButton.id ="advButton";
-		advButton.value = "kh";
-		advButton.addEventListener('click', () => {
-			let disButton = document.getElementById('disButton');
-			this.classList.toggle('die-btn-active');
-			if(disButton.classList.contains('die-btn-active'))
-				disButton.classList.remove('die-btn-active');
+	    
+	    var buttons = document.getElementsByClassName("godiceroll-advdis-btn");
+		var arr = [...buttons];
+		arr.forEach((element, index) => {
+		  element.addEventListener("click", () => {
+			if(!element.classList.contains('active'))
+				element.classList.add('active');
+		    advdis_modifier = element.dataset.value;
+		    arr.filter(function (item) {
+		        return item != element;
+		      }).forEach((item) => {
+		        item.classList.remove('active');
+		      });
+		  });
 		});
-		
-		let disButton = document.createElement("button");
-		disButton.textContent = "Dis";
-		disButton.id = "disButton";
-		disButton.value = "kl";
-		disButton.addEventListener('click', () => {
-			let advButton = document.getElementById('advButton');
-			this.classList.toggle('die-btn-active');
-			if(advButton.classList.contains('die-btn-active'))
-				advButton.classList.remove('die-btn-active');
-		});
-		
-		let advdivElement = document.createElement("div");
-		advdivElement.style ="display: grid;width: 35px;";
-		advdivElement.appendChild(advButton);
-		advdivElement.appendChild(disButton);
-	
-	    // Container for the slider and value
-	    let rangeContainer = document.createElement("div");
-	    rangeContainer.style = "position: relative; display:flex;align-items: center;";
-	    rangeContainer.id="godiceroll-modifier"
-	    rangeContainer.title = "GoDice Modifier";
-	    rangeContainer.appendChild(rangeElement);
-	    rangeContainer.appendChild(rangeValue);
-		rangeContainer.appendChild(advdivElement);
-	
-	    // Adding elements to chat controls
-	    chatControls.appendChild(rangeContainer);
     }
     
     static removeModifier()

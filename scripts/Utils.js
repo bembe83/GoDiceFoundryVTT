@@ -12,11 +12,11 @@ class Utils {
 		connectedDice.forEach(function(dieInstance, diceId) {
 			diceToStore.push(diceId + "|" + dieInstance.getDieType(true));
 		});
-		Utils.setCookie('connectedDice', btoa(JSON.stringify(diceToStore)), 2);
+		Utils.setCookie('connectedDice', JSON.stringify(diceToStore), 2);
 	}
 	
 	static LoadStoredInfos() {
-		let storedConnectedDice = atob(Utils.getCookie('connectedDice'));
+		let storedConnectedDice = Utils.getCookie('connectedDice');
 		if (storedConnectedDice) {
 			console.log("Wait... Reloading Stored dices...");
 			let storedDice = JSON.parse(storedConnectedDice);
@@ -29,7 +29,7 @@ class Utils {
 					let newDieInstance = new GoDiceExt();
 					newDieInstance.diceId = dieId;
 					newDieInstance.setDieType(dieType);
-					newDieInstance.setDieColor();
+					//newDieInstance.setDieColor();
 					newDieInstance.setBatteryLevel();
 					disconnectedDice.set(dieId, newDieInstance);
 					//newDieInstance.reconnectDevice(dieId, dieType).catch((error)=>{console.log(error)});
@@ -275,7 +275,7 @@ class Utils {
 			}
 			
 			let r = Roll.fromTerms(terms);
-			r.isSingleRoll = true;
+			//r.isSingleRoll = true;
 			r.toMessage({flavor:"<b style =\"font-size:1.5em\">GoDiceRoll</b>"});
 		}
 		rolledDice.clear();

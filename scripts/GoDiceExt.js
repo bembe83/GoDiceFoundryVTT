@@ -106,6 +106,7 @@ class GoDiceExt extends GoDice {
 				return characteristic.getDescriptors();
 			})
 			.then(descriptors => {
+				this.setDieColor();
 				this.onStartNotificationsButtonClick();
 			});
 		},{ once: true });

@@ -70,14 +70,12 @@
 	    
 	    var buttons = document.getElementsByClassName("godiceroll-advdis-btn");
 		var arr = [...buttons];
-		arr.forEach((element, index) => {
+		arr.forEach((element) => {
 		  element.addEventListener("click", () => {
 			if(!element.classList.contains('active'))
 				element.classList.add('active');
 		    advdis_modifier = element.dataset.value;
-		    arr.filter(function (item) {
-		        return item != element;
-		      }).forEach((item) => {
+		    arr.filter(function (item) { return item != element; }).forEach((item) => {
 		        item.classList.remove('active');
 		      });
 		  });
@@ -86,7 +84,7 @@
     
     static removeModifier()
     {
-		let mod= document.getElemntById("godiceroll-modifier");
+		let mod=document.getElemntById("godiceroll-modifier");
 		if(mod)
 		{
 			mod.remove();			

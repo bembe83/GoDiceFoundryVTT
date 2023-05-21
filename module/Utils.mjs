@@ -1,6 +1,10 @@
-var rollTimer;
+import { GoDiceExt, rolledDice, disconnectedDice, connectedDice } from "./GoDiceExt.mjs";
+import { GoDiceRoll, advdis_modifier, godiceroll_modifier, ROLLED_TIMEOUT } from "./GoDiceRoll.mjs";
 
-class Utils {
+export var rollTimer;
+export const MODULE_NAME = "go-dice-module";
+
+export class Utils {
 
 	static openConnectionDialog() {
 		const newDice = new GoDiceExt();
@@ -73,8 +77,8 @@ class Utils {
 	}
 
 	static getModulePath() {
-		let paths = Array.from(document.getElementsByTagName('script')).filter((script) => { return script.src.includes('GoDice') })[0].src.split("/")
-		let path = "/modules/" + paths[4] + "/";
+		let id = game.modules.filter(module => {return module.title.includes("GoDice")})[0].id;
+		let path = "/modules/" + id + "/";
 		console.debug("Module path: ", path);
 		return path;
 	}
@@ -185,6 +189,9 @@ class Utils {
 				dieField.value = parseInt(value);
 			}
 		}
+		let remaining = Array.from(document.querySelectorAll("#roll_prompt")[0].querySelectorAll(".dice")).filter(dice => { return !dice.value});
+		if(remaining.length == 0 && GoDiceRoll.isAutoSendEnabled())
+			document.getElementById("roll_submit").click();
 	}
 	
 	static rollFieldUpdate(diceRolls){

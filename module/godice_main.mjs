@@ -1,4 +1,8 @@
-const MODULE_NAME = "go-dice-module";
+import { diceBarInit, DiceBar } from './DiceBar.mjs';
+import { GoDice } from './GoDice.mjs';
+import { connectedDice, disconnectedDice } from './GoDiceExt.mjs';
+import { GoDiceRoll } from './GoDiceRoll.mjs';
+import { MODULE_NAME, Utils, rollTimer } from './Utils.mjs';
 
 Hooks.on('init', () => {
 	DiceBar.init();
@@ -66,7 +70,7 @@ GoDice.prototype.onDiceConnected = (diceId, diceInstance) => {
 
 GoDice.prototype.onDisconnected = (event) => {
 	console.debug(event);
-	diceId = event.target.id;
+	let diceId = event.target.id;
 	if(connectedDice.get(diceId)?.reconnect)
 		disconnectedDice.set(diceId, connectedDice.get(diceId));
 	connectedDice.delete(diceId);

@@ -44,8 +44,15 @@
 			}
 		}
 	],
-	"esmodules": [
-		"module/godice_main.mjs"
+	"scripts": [
+		"./scripts/GoDice.js",
+		"./scripts/Utils.js",
+		"./scripts/DieTypePrompt.js",
+		"./scripts/GoDiceExt.js",
+		"./scripts/DiceBar.js",
+		"./scripts/GoDiceRoll.js",
+		"./scripts/GoDiceRollPrompt.js",
+		"./scripts/main.js"
 	],
 	"styles": [
 		"styles/main.css",

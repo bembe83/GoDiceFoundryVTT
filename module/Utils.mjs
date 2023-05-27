@@ -194,23 +194,22 @@ export class Utils {
 			document.getElementById("roll_submit").click();
 	}
 	
-	static rollFieldUpdate(diceRolls){
-		console.debug(this);
+	static rollFieldUpdate(dieField){
+		console.debug(dieField);
 		let diceRollsPrompt = document.querySelectorAll('#roll_prompt');
 		let remainRolls = parseInt(diceRollsPrompt[0].getAttribute("data-counter"));
-		let dieField = diceRolls[r].querySelectorAll('.dice')[0];
 		let dieValue  = document.createElement('input');
 		
 		dieField.setAttribute('readonly', true);
 		dieValue.type = 'hidden';
 		dieValue.name = dieField.name;
-		dieValue.value = parseInt(value);
+		dieValue.value = parseInt(dieField.value);
 		dieField.insertAdjacentElement('afterend',dieValue);
 		
 		remainRolls--;
 		diceRollsPrompt[0].setAttribute("data-counter", remainRolls);
 		
-		sendRolls(diceRollsPrompt);
+		Utils.sendRolls(diceRollsPrompt);
 	}
 	
 	static sendRolls(diceRollsPrompt){

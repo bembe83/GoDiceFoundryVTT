@@ -1,4 +1,5 @@
 import { Utils } from './Utils.mjs';
+import { GoDice } from './GoDice.mjs';
 
 /**
  * @class

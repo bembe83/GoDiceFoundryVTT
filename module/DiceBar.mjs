@@ -2,6 +2,7 @@ import { Utils, MODULE_NAME } from './Utils.mjs';
 import { GoDice } from './GoDice.mjs';
 import { GoDiceExt } from './GoDiceExt.mjs';
 import { connectedDice } from './GoDiceExt.mjs';
+import { DieTypePrompt } from './DieTypePrompt.mjs';
 
 export async function diceBarInit() {
 

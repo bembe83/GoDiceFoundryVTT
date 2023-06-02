@@ -1,5 +1,6 @@
 import { GoDiceExt, rolledDice, disconnectedDice, connectedDice } from "./GoDiceExt.mjs";
 import { GoDiceRoll, advdis_modifier, godiceroll_modifier, ROLLED_TIMEOUT } from "./GoDiceRoll.mjs";
+import { GoDiceRollPrompt } from "./GoDiceRollPrompt.mjs";
 
 export var rollTimer;
 export const MODULE_NAME = "go-dice-module";
@@ -187,24 +188,25 @@ export class Utils {
 				let dieField = diceRolls[r].querySelectorAll('.dice')[0];		
 				flagAssigned = true;
 				dieField.value = parseInt(value);
+				dieField.dataset.godice = true;
+				$(dieField).trigger('change');
 			}
 		}
-		let remaining = Array.from(document.querySelectorAll("#roll_prompt")[0].querySelectorAll(".dice")).filter(dice => { return !dice.value});
-		if(remaining.length == 0 && GoDiceRoll.isAutoSendEnabled())
-			document.getElementById("roll_submit").click();
 	}
 	
 	static rollFieldUpdate(dieField){
 		console.debug(dieField);
 		let diceRollsPrompt = document.querySelectorAll('#roll_prompt');
 		let remainRolls = parseInt(diceRollsPrompt[0].getAttribute("data-counter"));
-		let dieValue  = document.createElement('input');
 		
-		dieField.setAttribute('readonly', true);
-		dieValue.type = 'hidden';
-		dieValue.name = dieField.name;
-		dieValue.value = parseInt(dieField.value);
-		dieField.insertAdjacentElement('afterend',dieValue);
+		if(dieField.dataset.godice){
+			let dieValue  = document.createElement('input');
+			dieField.setAttribute('readonly', true);
+			dieValue.type = 'hidden';
+			dieValue.name = dieField.name;
+			dieValue.value = parseInt(dieField.value);
+			dieField.insertAdjacentElement('afterend',dieValue);
+		}
 		
 		remainRolls--;
 		diceRollsPrompt[0].setAttribute("data-counter", remainRolls);
@@ -214,8 +216,8 @@ export class Utils {
 	
 	static sendRolls(diceRollsPrompt){
 		let remainRolls = parseInt(diceRollsPrompt[0].getAttribute("data-counter"));	
-		if(remainRolls<=0) {
-			diceRollsPrompt[0].getElementByTagName("button")[0].click();
+		if(remainRolls<=0 && GoDiceRoll.isAutoSendEnabled()) {
+			document.getElementById("roll_submit").click();
 		}	
 	}
 	

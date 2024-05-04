@@ -1,15 +1,6 @@
-<script>
-	function changeImageDie(event) {
-		let selectedDice = event.target?.value;
-		if (selectedDice) {
-			document.getElementById('diceTypeIcon').src = {{path}} + "images/" + selectedDice + ".webp";
-		}
-	}
-</script>
 <div class="diceTypes">
 	<label style="margin-right: 10px">{{label}}</label>
-	<!--<select id="diceTypes" onchange="let selectElement = document.getElementById('diceTypes'); document.querySelector(':root').style.setProperty('--die-type', selectElement[selectElement.selectedIndex].id)">-->
-	<select id="diceTypes" onchange="document.getElementById('diceTypeIcon').src = {{path}} + 'images/' + event.target.value + '.webp'">
+	<select id="diceTypes" onchange="document.getElementById('diceTypeIcon').src = '{{path}}' + event.target.value + '.webp'">
 		{{#each diceTypes}}
 		<option id={{id}} value={{type}}>{{type}}</option>
 		{{/each}}

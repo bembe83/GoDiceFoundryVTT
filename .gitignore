@@ -9,5 +9,6 @@
 *foundry-reference*
 .DS_Store
 *.sh
+*.bat
 .*
 

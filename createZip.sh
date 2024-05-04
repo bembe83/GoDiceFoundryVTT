@@ -1,1 +1,0 @@
-zip GoDiceFoundryVTT_V2.0.0.zip ./ -r -0 -x "*.zip" -x "*.sh" -x ".*"

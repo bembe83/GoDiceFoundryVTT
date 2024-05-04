@@ -55,7 +55,7 @@ export class DieTypePrompt {
 		let selectElement = document.getElementById('diceTypes');
 		if (selectElement) {
 			let selectedIndex = selectElement.selectedIndex;
-			selectedValue = selectElement[selectedIndex].id;
+			selectedValue = selectElement[selectedIndex].value;
 		}
 		else {
 			console.log("No diceTypes element found");

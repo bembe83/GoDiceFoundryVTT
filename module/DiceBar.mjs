@@ -30,6 +30,14 @@ export async function diceBarInit() {
 			console.debug(`Is the DiceBar disabled? ${value}`)
 		}
 	});
+	
+	Hooks.on("collapseSidebar", ()=> {
+		let r = document.querySelector(':root'); 
+		let px = document.querySelector("#ui-right").offsetWidth;
+		if(px <100)
+			px = 5;
+		r.style.setProperty('--dicebar-x-pos', px+"px");
+	});
 
 	let diceDisplay = "flex";
 	if (game.settings.get(MODULE_NAME, "DiceBarDisabled") === true) {
@@ -38,7 +46,12 @@ export async function diceBarInit() {
 	}
 
 	let r = document.querySelector(':root');
+	let px = document.querySelector("#ui-right").offsetWidth;
+	if(px <100)
+		px = 5;
+	r.style.setProperty('--dicebar-x-pos', px+"px");
 	r.style.setProperty('--dicebar-display', diceDisplay);
+	//r.style.setProperty('--godicemodule-path'), Utils.getModulePath());
 	Utils.setDiceBarMaxSlots();
 
 	ui.dicebar.render(true, obj);
@@ -47,8 +60,8 @@ export async function diceBarInit() {
 export class DiceBar extends Hotbar {
 	
 	static init(){
-		if (document.querySelector('#loading') !== null) {
-			let hbEl = document.querySelector('#loading');
+		if (document.querySelector('#hud') !== null) {
+			let hbEl = document.querySelector('#hud');
 			let dbEl = document.createElement('template');
 			dbEl.setAttribute('id', 'dicebar');
 			hbEl.insertAdjacentElement('afterend', dbEl);
@@ -214,9 +227,10 @@ export class DiceBar extends Hotbar {
 					let diceInstance = connectedDice.get(li.data("diceId"));
 					let diePrompt = new DieTypePrompt();
 					let dieType = await diePrompt.showTypePrompt(diceInstance);
-					if(dieType)
+					if(dieType) {
 						diceInstance.setDieType(dieType);
-					else
+						Utils.saveDices();
+					}else
 						console.log("Error retrieving die type.", diceInstance);
 					this.render();
 				}

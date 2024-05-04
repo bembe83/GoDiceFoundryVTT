@@ -1,2 +1,2 @@
 # GoDiceFoundyVtt
-Interface to goDice dices with FoundyVTT ExternalRoll module
+Interface to goDice dice with FoundyVTT Unfulfilled Rolls module

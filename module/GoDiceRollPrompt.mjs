@@ -1,4 +1,4 @@
-import { Utils } from "./Utils.mjs";
+import { Utils, facesToImages, facesToIcon } from "./Utils.mjs";
 
 /**
  * @class
@@ -6,89 +6,77 @@ import { Utils } from "./Utils.mjs";
  */
 
 export class GoDiceRollPrompt extends FormApplication {
-
-	constructor() {
-		super(...arguments);
-		this._nextId = 0;
-		this._terms = [];
+	
+	constructor(terms , roll, callback){
+		super({});
+        this.roll = roll;
+        this.callback = callback;
+        this._nextId = 0;
+		this._terms = terms;
 		this._rolled = false;
 	}
 
 	static get defaultOptions() {
 		let modulePath = Utils.getModulePath();
-		return mergeObject(FormApplication.defaultOptions, {
+		return foundry.utils.mergeObject(super.defaultOptions, {
+			id: "godicemodule-resolver",
 			title: game.i18n.localize("GODICE_ROLLS.Prompt.DefaultRollTitle"),
 			template: modulePath + "templates/diceroll-prompt.hbs",
-			width: 400,
+			width: 720,
+			height: 290
 		});
 	}
 
-	getData(_options) {
-		const data = [];
-		let modulePath = Utils.getModulePath();
-		for (const term of this._terms) {
-			const die = term.term;
-			for (let c = 0; c < die.number; c++) {
-				data.push({
-					id: term.id.toString(),
-					idx: c,
-					faces: c == 0 ? `${die.number}d${die.faces}${die.modifiers.length > 0 ? ' [' + die.modifiers.join(',') + ']' : ''}` : '',
-					hasTotal: c == 0 && die.modifiers.length == 0 && die.number > 1,
-					term: die,
-					modulepath: modulePath
-				});
-			}
+	async getData(options ={}) {
+		const context = await super.getData(options)
+		context.terms = this._terms;
+		
+		for (const term of context.terms) {
+			term.image = facesToIcon[term.faces];
+			term.placeholder = Math.ceil(CONFIG.Dice.randomUniform() * term.faces)
 		}
-		return { terms: data };
-	}
+		
+		context.roll = this.roll;		
+		return context;
+	}	
+	    /** @override */
+    _getSubmitData(updateData = {}) {
+        const data = super._getSubmitData(updateData);
 
-	close(options) {
-		// If we have not actually rolled anything yet, we need to resolve these with RNG values
-		if (!this._rolled) {
-			this._rolled = true;
-			for (const x of this._terms) {
-				const results = [];
-				for (let c = 0; c < x.term.number; c++) {
-					results.push(Math.ceil(CONFIG.Dice.randomUniform() * x.term.faces));
-				}
-				x.res(results);
+        // Find all input fields and add placeholder values to inputs with no value
+        const inputs = this.form.querySelectorAll("input");
+        for ( const input of inputs ) {
+            if ( !input.value ) {
+                data[input.name] = input.placeholder;
+            }else{
+				data[input.name] = input.value;
 			}
-		}
-		return super.close(options);
-	}
+        }
+
+        return data;
+    }
 
 	render(force, options) {
-		if (this._terms.length == 0)
+		if (!this._terms || this._terms.length == 0)
 			return;
 		return super.render(force, options);
 	}
 
 	async _render(force, options) {
 		await super._render(force, options);
+		document.querySelector(':root').style.setProperty("--dice-grid", this._terms.length <4?this._terms.length:4);
 		this.element.find('input')[0].focus();
 	}
 
-	_updateObject(_, formData) {
-		for (const x of this._terms) {
-			const results = [];
-			const flags = [];
-			for (let c = 0; c < x.term.number; c++) {
-				const roll = formData[`${x.id}-${c}`];
-				let value = parseInt(roll);
-				if (isNaN(value)) {
-					value = Math.ceil(CONFIG.Dice.randomUniform() * x.term.faces);
-					flags.push('RN');
-				}
-				else {
-					flags.push('GR');
-					x.term.options.isGoDiceRoll = true;
-				}
-				results.push(value);
-			}
-			x.res(results);
-		}
-		this._rolled = true;
-		return undefined;
+	async _updateObject(_, formData) {
+		 // Turn the entries into a map
+        const fulfilled = new Map();
+        for ( const [id, result] of Object.entries(formData) ) {
+            // Parse the result as a number
+            fulfilled.set(id, Number(result));
+        }
+        this.callback(fulfilled);
+
 	}
 
 	requestResult(term) {
@@ -98,6 +86,6 @@ export class GoDiceRollPrompt extends FormApplication {
 	/** @inheritdoc */
 	activateListeners(html) {
 		super.activateListeners(html);
-		html.find(".dice").change((ev)=>{ Utils.rollFieldUpdate(ev.target); })
+		html.find(".dice-term-input").change((ev)=>{ Utils.rollFieldUpdate(ev.target); })
 	}
 }

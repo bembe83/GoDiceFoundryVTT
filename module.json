@@ -1,9 +1,9 @@
 {
-	"id:": "go-dice-module",
+	"id": "go-dice-module",
 	"name": "go-dice-module",
 	"title": "GoDice Module",
-	"version": "1.0.0",
-	"description": "A module to allow to play with real Go Dice dice with foundryVTT using Manual Roll module",
+	"version": "2.0.0",
+	"description": "A module to allow to play with real GoDice dice with foundryVTT using Unfullfilled Rolls module",
 	"authors": [
 		{
 			"name": "Bembe83"
@@ -13,18 +13,19 @@
 		"requires": [
 			{
 				"id": "lib-wrapper",
-				"type": "module",
-				"compatibility": {
-					"verified": "1.12.10.0"
-				}
-			}
+				"type": "module"
+			},
+			{
+				"id": "unfulfilled-rolls",
+				"type": "module"
+			 }
 		]
 	},
-	"minimumCoreVersion": "10.291",
-	"compatibleCoreVersion": "10",
+	"minimumCoreVersion": "10.307",
+	"compatibleCoreVersion": "11",
 	"compatibility": {
-		"minimum": 9,
-		"verified": "10.284"
+		"minimum": 10,
+		"verified": "11.315"
 	},
 	"languages": [
 		{
@@ -49,10 +50,11 @@
 	],
 	"styles": [
 		"styles/main.css",
-		"styles/dicebar.css"
+		"styles/dicebar.css",
+		"styles/roll_prompt.css"
 	],
 	"socket": true,
 	"url": "https://github.com/bembe83/GoDiceFoundryVTT",
-	"manifest": "https://github.com/bembe83/GoDiceFoundryVTT/releases/download/V1.0.0/module.json",
-	"download": "https://github.com/bembe83/GoDiceFoundryVTT/releases/download/V1.0.0/GoDiceFoundryVTT_V1.0.0.zip"
+	"manifest": "https://github.com/bembe83/GoDiceFoundryVTT/releases/download/V2.0.0/module.json",
+	"download": "https://github.com/bembe83/GoDiceFoundryVTT/releases/download/V2.0.0/GoDiceFoundryVTT_V2.0.0.zip"
 }

@@ -3,6 +3,9 @@
 /* ----------------------------------------- */
 :root {
 
+  --godicemodule-path: '';
+  --die-type: 'D6';
+
   --dicebar-height: 40px;
   --dicebar-width: 40px;
   --dicebar-dice-size: 40px;
@@ -14,13 +17,18 @@
   --dicebar-border-color-inactive: #939799ff;
 
   --dicebar-x-pos: 0;
-  --dicebar-y-pos: 400;
+  --dicebar-y-pos: 0;
   /*--dicebar-display: flex;*/
+  
 }
 
 /* ---------------------------------------- */
 /*  DiceBar                                 */
 /* ---------------------------------------- */
+#ui-middle {
+  z-index: calc(var(--z-index-app) + 1);
+}
+
 #dicebar {
   z-index: calc(var(--z-index-ui) + 9);
   width: calc((var(--dicebar-dice-size)) * calc(var(--dicebar-slots) + 1));
@@ -28,11 +36,12 @@
   pointer-events: none;
   flex-wrap: nowrap;
   margin-bottom: 10px;
-  margin-bottom: 10px;
+  /*margin-right: 20px;*/
   position: absolute;
   display: var(--dicebar-display);
   bottom: var(--dicebar-y-pos);  
-  /*left: var(--dicebar-x-pos);*/
+  right: var(--dicebar-x-pos);
+  flex-direction: row-reverse;
 }
 #dicebar .bar-controls {
   flex: 0 0 32px;
@@ -208,55 +217,6 @@
 #dicebar-page-controls, #dicebar-directory-controls #custom-macro-directory {
   display: none;
 }
-
-/* with apologies to sdenec, lifted from Tidy UI Settings module, which you should install... 
-#client-settings .chb-setting label,
-#client-settings .chb-setting > label {
-flex-grow: unset;
-flex-basis: unset;
-flex: 1 1 100%;
-line-height: 1.2;
-margin: 0 0 .25rem calc(13px + 1rem);
-order: -1;
-} */
-
-
-/*
-div.chbSettings div.colorsplash .layout_default.picker_wrapper{
-  margin-bottom: 26px;
-}
-div#client-settings .chb-setting label {
-  padding-top: 8px;
-}
-/* Settings Menu 
-div#dicebar-settings-form div.colorsplash input.expanded {
-  opacity:0;
-}
-div#dicebar-flags-form div.colorsplash input.expanded {
-  opacity:0;
-}
-div#core-hotbar-settings-form div.colorsplash input.expanded {
-  opacity:0;
-}
-div#core-hotbar-flags-form div.colorsplash input.expanded {
-  opacity:0;
-}
-*/
-
-/* hide extra button on color picker selection */
-
-
-/* In Settings Menu, Make H1 and H2 less ridonkulous
-div#dicebar-settings-form h1 {
-  font-size:x-large;
-}
-div#dicebar-settings-form h2 {
-  font-size:large;
-} */
-
-
-
-
 
 /* ---------------------------------------- */
 /*  Media                                   */

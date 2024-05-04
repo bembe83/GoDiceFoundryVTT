@@ -3,12 +3,14 @@ import { GoDice } from './GoDice.mjs';
 import { connectedDice, disconnectedDice } from './GoDiceExt.mjs';
 import { GoDiceRoll } from './GoDiceRoll.mjs';
 import { MODULE_NAME, Utils, rollTimer } from './Utils.mjs';
+import { GoDiceRollPrompt } from "./GoDiceRollPrompt.mjs";
+import { DieTypePrompt } from "./DieTypePrompt.mjs";
 
 Hooks.on('init', () => {
 	DiceBar.init();
 	GoDiceRoll.init();
 	
-    game.socket.on("module.go-dice-module", Utils.handleRemoteRoll.bind(null,event));
+   // game.socket.on("module.go-dice-module", Utils.handleRemoteRoll.bind(null,event));
 });
 
 Hooks.on("renderDiceBar", async () => {
@@ -27,33 +29,41 @@ Hooks.on('ready', () => {
 	GoDiceRoll.patch();
 	Utils.LoadStoredInfos();
 	Utils.reconnectDice();
+	Utils.reconnectLoadedDice();
 	setInterval(function() { Utils.reconnectDice(); }, 5000);
 	console.debug("DiceBar | Foundry setup...");
 	diceBarInit();		
 });
 
-GoDice.prototype.onDiceConnected = (diceId, diceInstance) => {
+Hooks.once('unfulfilled-rolls-bluetooth', function(providers) {   
+    return foundry.utils.mergeObject(providers, {
+        MODULE_NAME: {
+            label: "GoDiceModule",
+            app: GoDiceRollPrompt
+        }
+    })
+});
+
+GoDice.prototype.onDiceConnected = async (diceId, diceInstance) => {
 
 	if (connectedDice.get(diceId)) {
 		console.log('Dice already connected');
 	}else{
 		let dieType = GoDice.diceTypes.D20;
 		if(disconnectedDice?.get(diceId))  {
-			console.log("Reconnecting Dice: ", diceId);;
+			console.log("Reconnecting Dice: ", diceId);
 			connectedDice.set(diceId, disconnectedDice.get(diceId));
 			disconnectedDice.delete(diceId);
 		}else{
-			/*if(!dieType) {
-				let diePrompt = new DieTypePrompt();
-				dieType = await diePrompt.showTypePrompt(diceInstance);
-			}*/
 			if (diceInstance.newConnection && dieType) {
 				console.log("Connecting New Dice: ", diceId);
 				connectedDice.set(diceId, diceInstance);
 				diceInstance.diceId = diceId;
-				diceInstance.setDieType(dieType);
 				diceInstance.setDieColor();
 				diceInstance.setBatteryLevel();
+				let diePrompt = new DieTypePrompt();
+				dieType = await diePrompt.showTypePrompt(diceInstance);
+				diceInstance.setDieType(dieType);
 			} else if(!diceInstance.newConnection){
 				console.log("Connecting Stored Dice: ", diceId);
 				connectedDice.set(diceId, diceInstance);

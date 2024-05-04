@@ -34,17 +34,19 @@ export class GoDiceRoll {
 				console.debug(`Is the GoDice auto send roll enabled? ${value}`)
 			}
 		});
+		
+		let dbEl = document.createElement('div');
+		dbEl.id = 'round-time-bar';
+		dbEl.setAttribute('class', 'round-time-bar');
+		dbEl.style = "--duration:" + (ROLLED_TIMEOUT / 1000) + ";";
+		dbEl.setAttribute("data-style", "smooth");
+		dbEl.appendChild(document.createElement('div'));
 
 		if (document.querySelector('#loading') !== null) {
-			let hbEl = document.querySelector('#loading');
-			let dbEl = document.createElement('div');
-			dbEl.id = 'round-time-bar';
-			dbEl.setAttribute('class', 'round-time-bar');
-			dbEl.style = "--duration:" + (ROLLED_TIMEOUT / 1000) + ";";
-			dbEl.setAttribute("data-style", "smooth");
-			dbEl.appendChild(document.createElement('div'));
+			let hbEl = document.querySelector('#loading');	
 			hbEl.insertAdjacentElement('afterend', dbEl);
 		}
+		
 	}
 
 	static async injectModifier() {
@@ -111,10 +113,10 @@ export class GoDiceRoll {
 	}
 
 	static patch() {
-		libWrapper.register(MODULE_NAME, 'Roll.prototype._evaluate', this._Roll_evaluate, 'MIXED');
+		/*libWrapper.register(MODULE_NAME, 'Roll.prototype._evaluate', this._Roll_evaluate, 'MIXED');
 		libWrapper.register(MODULE_NAME, 'DiceTerm.prototype._evaluate', this._DiceTerm_evaluate, 'MIXED');
 		libWrapper.register(MODULE_NAME, 'Die.prototype.reroll', this._Die_reroll, 'MIXED');
-		libWrapper.register(MODULE_NAME, 'Die.prototype.explode', this._Die_explode, 'MIXED');
+		libWrapper.register(MODULE_NAME, 'Die.prototype.explode', this._Die_explode, 'MIXED');*/
 		GoDiceRoll.injectModifier();
 	}
 

@@ -1,9 +1,28 @@
-import { GoDiceExt, rolledDice, disconnectedDice, connectedDice } from "./GoDiceExt.mjs";
+import { GoDiceExt, rolledDice, disconnectedDice, connectedDice, reloadedDice } from "./GoDiceExt.mjs";
 import { GoDiceRoll, advdis_modifier, godiceroll_modifier, ROLLED_TIMEOUT } from "./GoDiceRoll.mjs";
-import { GoDiceRollPrompt } from "./GoDiceRollPrompt.mjs";
 
 export var rollTimer;
 export const MODULE_NAME = "go-dice-module";
+
+export const  facesToImages = {
+            4: "modules/"+MODULE_NAME+"/images/d4.webp",
+            6: "modules/"+MODULE_NAME+"/images/d6.webp",
+            8: "modules/"+MODULE_NAME+"/images/d8.webp",
+            10: "modules/"+MODULE_NAME+"/images/d10.webp",
+            12: "modules/"+MODULE_NAME+"/images/d12.webp",
+            20: "modules/"+MODULE_NAME+"/images/d20.webp",
+            100: "modules/"+MODULE_NAME+"/images/d10.webp",
+}
+
+export const  facesToIcon= {
+            4: "modules/"+MODULE_NAME+"/images/d4_icon.webp",
+            6: "modules/"+MODULE_NAME+"/images/d6_icon.webp",
+            8: "modules/"+MODULE_NAME+"/images/d8_icon.webp",
+            10: "modules/"+MODULE_NAME+"/images/d10_icon.webp",
+            12: "modules/"+MODULE_NAME+"/images/d12_icon.webp",
+            20: "modules/"+MODULE_NAME+"/images/d20_icon.webp",
+            100: "modules/"+MODULE_NAME+"/images/d10_icon.webp",
+}
 
 export class Utils {
 
@@ -15,7 +34,7 @@ export class Utils {
 	static saveDices() {
 		let diceToStore = [];
 		connectedDice.forEach(function(dieInstance, diceId) {
-			diceToStore.push(diceId + "|" + dieInstance.getDieType(true));
+			diceToStore.push(diceId + "|" + dieInstance.getDieType(true) + "|" + dieInstance.getDiceColor(true));
 		});
 		Utils.setCookie('connectedDice', JSON.stringify(diceToStore), 2);
 	}
@@ -29,6 +48,7 @@ export class Utils {
 				console.debug("Retrieved info ", dieInfo);
 				let dieId = dieInfo.split("|")[0];
 				let dieType = dieInfo.split("|")[1];
+				let diecolor = dieInfo.split("|")[2];
 				try {
 					console.debug("Setting device ", dieId, " of type ", dieType," to be reconnected");
 					let newDieInstance = new GoDiceExt();
@@ -36,13 +56,13 @@ export class Utils {
 					newDieInstance.setDieType(dieType);
 					//newDieInstance.setDieColor();
 					newDieInstance.setBatteryLevel();
-					disconnectedDice.set(dieId, newDieInstance);
+					reloadedDice.set(dieId, newDieInstance);
 					//newDieInstance.reconnectDevice(dieId, dieType).catch((error)=>{console.log(error)});
 				} catch (err) {
 					console.log("Exception Loading Stored Dice.", dieId, err);
 				}
 			})
-			console.debug(disconnectedDice);
+			console.debug(reloadedDice);
 		}
 	}
 
@@ -69,9 +89,24 @@ export class Utils {
 				try {
 					console.debug("Reconnecting device ", dieId);
 					dieInstance.reconnectDevice(dieId, dieInstance.getDieType(true));
+					
 				} catch (err) {
 					console.log("Exception Reconnecting Die.", dieId, err);
 					disconnectedDice.delete(dieId);
+				}
+			});
+		}
+	}
+	
+	static reconnectLoadedDice(){
+		if(reloadedDice) {
+			reloadedDice.forEach(function(dieInstance, dieId) {
+				try {
+					console.debug("Reconnecting device ", dieId);
+					dieInstance.reconnectLoadedDevice(dieId, dieInstance.getDieType(true));
+				} catch (err) {
+					console.log("Exception Reconnecting Die.", dieId, err);
+					reloadedDice.delete(dieId);
 				}
 			});
 		}
@@ -98,6 +133,10 @@ export class Utils {
 			console.log("Module: df-manual-rolls not found. ", err);
 		}
 		return;
+	}
+	
+	static unfulfilledRollsEnabled(){
+		return game.modules.get("unfulfilled-rolls") ? true : false;
 	}
 
 	static htmlToElement(html) {
@@ -168,28 +207,25 @@ export class Utils {
 		let diceRollsPrompt = document.querySelectorAll('#roll_prompt');
 		if (GoDiceRoll.isEnabled() && diceRollsPrompt && diceRollsPrompt.length > 0){
 			Utils.populateRollPrompt(diceRollsPrompt, dieType, value);
-		}
-		else {
+		}	else{
 			Utils.startTimeout(dieType, dieFaces, value);
 		}
 	}
 	
 	static populateRollPrompt(diceRollsPrompt, dieType, value) {
 				
-		let diceRolls = diceRollsPrompt[0].querySelectorAll('.'+dieType.toLowerCase());
+		let diceRolls = diceRollsPrompt[0].querySelectorAll('input[name^="'+dieType.toLowerCase()+'"]')
 		if(!diceRolls || diceRolls.length == 0)	{
 			console.log("No roll required for the type "+dieType.toLowerCase());
 			return;
 		}
 		let flagAssigned = false;
 		for(let r=0;r<diceRolls.length && !flagAssigned; r++) {
-			if(!diceRolls[r]?.querySelectorAll('.dice')[0].value)
+			if(!diceRolls[r]?.value)
 			{
-				let dieField = diceRolls[r].querySelectorAll('.dice')[0];		
+				diceRolls[r].value = parseInt(value);
+				Utils.rollFieldUpdate(diceRolls[r]);	
 				flagAssigned = true;
-				dieField.value = parseInt(value);
-				dieField.dataset.godice = true;
-				$(dieField).trigger('change');
 			}
 		}
 	}
@@ -199,14 +235,8 @@ export class Utils {
 		let diceRollsPrompt = document.querySelectorAll('#roll_prompt');
 		let remainRolls = parseInt(diceRollsPrompt[0].getAttribute("data-counter"));
 		
-		if(dieField.dataset.godice){
-			let dieValue  = document.createElement('input');
-			dieField.setAttribute('readonly', true);
-			dieValue.type = 'hidden';
-			dieValue.name = dieField.name;
-			dieValue.value = parseInt(dieField.value);
-			dieField.insertAdjacentElement('afterend',dieValue);
-		}
+		dieField.setAttribute('readonly', true);
+		dieField.parentElement.classList.add("fulfilled")
 		
 		remainRolls--;
 		diceRollsPrompt[0].setAttribute("data-counter", remainRolls);
@@ -242,22 +272,7 @@ export class Utils {
 		bar[0].classList.add("round-time-bar");
 		rollTimer = setTimeout(Utils.rollDice, ROLLED_TIMEOUT);
 	}
-/*	
-	static async rollSingleDie(dieType, value) {	
-		let modif = (godiceroll_modifier>0?("+"+godiceroll_modifier.toString()):(godiceroll_modifier.toString()));
-		let r = new Roll("1" + dieType + modif);
-		r.isSingleRoll = true;
-		await r.evaluate({ async: true });
-		try {
-			r.terms[0].results[0].result = value;
-			r._total = r._evaluateTotal();
-			r.toMessage({speaker: Utils.findSpeaker(), flavor:"<b style =\"font-size:1.5em\">GoDiceRoll</b>"});
-		}
-		catch (err) {
-			console.log("Exp:", err);
-		}
-	}
-*/
+	
 	static rollDice() {	
 		let plus = new OperatorTerm({operator: "+"});
 		let terms=[];
@@ -283,7 +298,6 @@ export class Utils {
 			}
 			
 			let r = Roll.fromTerms(terms);
-			//r.isSingleRoll = true;
 			r.toMessage({flavor:"<b style =\"font-size:1.5em\">GoDiceRoll</b>"});
 		}
 		rolledDice.clear();
@@ -315,71 +329,5 @@ export class Utils {
 	        }
 	    }
 	    return "";
-	}
-	
-	static handleRemoteRoll(event){
-		switch (event.type) {
-			case "sessionId" :{
-				ack({ sessionId : game.sessionId });
-			}
-            case "roll": {
-                try {
-                    //Check if this is a formula (string) or a Roll (object).
-                    //A Roll will be converted into a real Roll object based on its formula, and then overwritten with the included data where possible.
-                    if (event.roll instanceof Object) {
-                        //Catch rolls that use "formula" or "total" as values instead of "_formula" and "_total".
-                        if (event.roll.formula) {
-                            event.roll._formula = event.roll.formula
-                        }
-                        if (event.roll.total) {
-                            event.roll._total = event.roll.total;
-                        }
-                        var r = new Roll(event.roll._formula);
-                        (async () => {
-							r.isSingleRoll = event.roll.terms?true:false;
-                            await r.evaluate({ async: true });
-                            //Try to overwrite each attribute, starting with the terms; getters will be caught and ignored.
-                            event.roll.terms?.forEach((term, index) => {
-                                try {
-                                    if (term instanceof Object && r.terms[index] instanceof Object) {
-                                        event.roll.terms[index] = Object.assign(r.terms[index], term);
-                                    } else {
-                                        r.terms[index] = term;
-                                    }
-                                } catch { }
-                            })
-                            Object.keys(event.roll).forEach(key => {
-                                try {
-                                    if (r[key] instanceof Object) {
-                                        r[key] = Object.assign(r[key], event.roll[key]);
-                                    } else {
-                                        r[key] = event.roll[key];
-                                    }
-                                } catch { }
-                            })
-                            const mySpeaker = Utils.findSpeaker(event);
-                            //Finally, post the finished Roll into the chat.
-                            r.toMessage({
-                                speaker: mySpeaker
-                            })
-                        })();
-                    } else {
-                        var r = new Roll(event.roll.toString());
-                        r.isSingleRoll = false;
-                        (async () => {
-                            await r.evaluate({ async: true });
-                            const mySpeaker = Utils.findSpeaker(event);
-                            //Finally, post the finished Roll into the chat.
-                            r.toMessage({
-                                speaker: mySpeaker
-                            })
-                        })();
-                    }
-                } catch (error) {
-                    ui.notifications.error("[GoDiceRoll] Error: " + error.toString());
-                }
-                break;
-            }
-        }
 	}
 }

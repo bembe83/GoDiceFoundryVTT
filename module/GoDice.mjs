@@ -17,7 +17,7 @@ export class GoDice {
 		RED: 1,
 		GREEN: 2,
 		BLUE: 3,
-		YELLOW: 4,
+		GOLDENROD: 4,
 		ORANGE: 5,
 	}
 	

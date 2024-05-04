@@ -1,6 +1,7 @@
 import { GoDice } from './GoDice.mjs';
 
 export const connectedDice = new Map();
+export const reloadedDice = new Map();
 export const disconnectedDice = new Map();
 export const rolledDice = new Map();
 
@@ -12,7 +13,7 @@ export class GoDiceExt extends GoDice {
 
 	dieColor = this.diceColour.BLACK;
 	dieBatteryLevel = 0;
-	newConnection = true;
+	newConnection = true;                                                                 
 	dieFaces = 6;
 	reconnect = true;
 	
@@ -61,7 +62,7 @@ export class GoDiceExt extends GoDice {
 		else if (this.bluetoothDevice.name.includes("_B_"))
 			this.dieColor = this.diceColour.BLUE;
 		else if(this.bluetoothDevice.name.includes("_Y_"))
-			this.dieColor =  this.diceColour.YELLOW;
+			this.dieColor =  this.diceColour.GOLDENROD;
 		else if(this.bluetoothDevice.name.includes("_O_"))
 			this.dieColor = this.diceColour.ORANGE;
 		else 
@@ -151,5 +152,39 @@ export class GoDiceExt extends GoDice {
 				}	
 			}			
 		});
+	}
+	
+	/**
+	 * Try to reconnect a previous connected GoDice, after session refresh
+	 */
+	async reconnectStoredDevice (dieId = null, dieType = 1) {
+		this.newConnection = false;
+		if(this.bluetoothDevice)
+		{
+			return this.connectDeviceAndCacheCharacteristics();
+		}
+		if(dieId)
+		{
+			this.diceId = dieId;
+			this.setDieType(dieType);
+		}
+		
+		if (!this.diceId) {		
+			console.debug(this);
+			return Promise.reject(new Error('reconnectDevice (dieId, dieType) => No device ID provided, use requestDevice instead.'));
+		}
+		
+		return navigator.permissions.query({name: "bluetooth", deviceId:this.diceId,}).then(results=>{
+			let device = results.devices[0];
+			if(device.id == this.diceId)
+				{
+					this.GlobalDeviceId = device.id.toString();				
+					this.bluetoothDevice = device;
+					this.newConnection = false;			
+					this.bluetoothDevice.addEventListener('gattserverdisconnected', this.onDisconnected);				
+					this.reConnectDeviceAndCacheCharacteristics();
+				}
+		});
+
 	}
 }

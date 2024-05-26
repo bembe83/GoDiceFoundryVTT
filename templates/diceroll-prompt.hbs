@@ -1,4 +1,4 @@
-<form autocomplete="off" id="roll_prompt" data-counter={{terms.length}}>
+<form autocomplete="off" id="roll-resolver" data-counter={{terms.length}}>
     <div class="dice-roll">
         {{#if roll.options.flavor}}
         	<h2 class="godice-module-flavor">{{roll.options.flavor}}</h2>
@@ -18,7 +18,7 @@
                         {{/if}}
                 <p class="dice-term-faces"><b>d{{term.faces}}</b></p>
             {{/if}}
-            <input type="number" class="dice-term-input" name="{{term.id}}" min="1" max="{{term.faces}}" step="1" data-term="{{i}}" placeholder ={{this.placeholder}}>
+            <input type="number" class="dice-term-input" name="{{term.id}}" min="1" max="{{term.faces}}" step="1" data-term="{{i}}" placeholder={{term.id}} data-temp={{this.placeholder}}>
         </div>
         {{/each}}
     </div>

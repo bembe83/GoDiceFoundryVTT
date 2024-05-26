@@ -104,6 +104,10 @@
 	height: fit-content;
 }
 
+.godiceroll-span label.icon:has(> input) > i {
+	color: beige;
+}
+
 .godiceroll-advdis{
 	display: flex; 
 	width: 31px;

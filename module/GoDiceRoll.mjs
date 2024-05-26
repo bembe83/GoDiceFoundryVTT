@@ -3,6 +3,7 @@ import { GoDiceRollPrompt } from "./GoDiceRollPrompt.mjs";
 
 export const GODICE_ENABLED = "GoDiceEnabled";
 export const GODICE_AUTOSEND = "GoDiceAutoSend";
+export const GODICE_STYLE = "GoDiceStyle";
 export const ROLLED_TIMEOUT = 5000;
 export var godiceroll_modifier = 0;
 export var advdis_modifier = "";
@@ -32,6 +33,16 @@ export class GoDiceRoll {
 			hint: game.i18n.localize('Enable send GoDice roll when all the input fileds are populated with numbers'),
 			onChange: value => {
 				console.debug(`Is the GoDice auto send roll enabled? ${value}`)
+			}
+		});
+		game.settings.register(MODULE_NAME, GODICE_STYLE, {
+			config: true,
+			type: Boolean,
+			default: false,
+			name: game.i18n.localize('Enable GoDice Style'),
+			hint: game.i18n.localize('Enable GoDice Style for roll popup in case of core dice roller resolver popup'),
+			onChange: value => {
+				console.debug(`Is the GoDice style enabled? ${value}`)
 			}
 		});
 		
@@ -111,6 +122,10 @@ export class GoDiceRoll {
 	static isAutoSendEnabled() {
 		return game.settings.get(MODULE_NAME, GODICE_AUTOSEND);
 	}
+	
+	static isStyleEnabled() {
+		return game.settings.get(MODULE_NAME, GODICE_STYLE);
+	}	
 
 	static patch() {
 		/*libWrapper.register(MODULE_NAME, 'Roll.prototype._evaluate', this._Roll_evaluate, 'MIXED');
@@ -121,10 +136,10 @@ export class GoDiceRoll {
 	}
 
 	static unpatch() {
-		libWrapper.unregister(MODULE_NAME, 'Roll.prototype._evaluate', this._Roll_evaluate, 'MIXED');
+		/*libWrapper.unregister(MODULE_NAME, 'Roll.prototype._evaluate', this._Roll_evaluate, 'MIXED');
 		libWrapper.unregister(MODULE_NAME, 'DiceTerm.prototype._evaluate', this._DiceTerm_evaluate, 'MIXED');
 		libWrapper.unregister(MODULE_NAME, 'Die.prototype.reroll', this._Die_reroll, 'MIXED');
-		libWrapper.unregister(MODULE_NAME, 'Die.prototype.explode', this._Die_explode, 'MIXED');
+		libWrapper.unregister(MODULE_NAME, 'Die.prototype.explode', this._Die_explode, 'MIXED');*/
 		GoDiceRoll.removeModifier();
 	}
 

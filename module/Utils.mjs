@@ -54,10 +54,8 @@ export class Utils {
 					let newDieInstance = new GoDiceExt();
 					newDieInstance.diceId = dieId;
 					newDieInstance.setDieType(dieType);
-					//newDieInstance.setDieColor();
 					newDieInstance.setBatteryLevel();
-					reloadedDice.set(dieId, newDieInstance);
-					//newDieInstance.reconnectDevice(dieId, dieType).catch((error)=>{console.log(error)});
+					reloadedDice.set(dieId, newDieInstance)
 				} catch (err) {
 					console.log("Exception Loading Stored Dice.", dieId, err);
 				}
@@ -136,7 +134,7 @@ export class Utils {
 	}
 	
 	static unfulfilledRollsEnabled(){
-		return game.modules.get("unfulfilled-rolls") ? true : false;
+		return game.modules.get("unfulfilled-rolls")?.active ? true : false;
 	}
 
 	static htmlToElement(html) {
@@ -204,17 +202,18 @@ export class Utils {
 		if(value === dieFaces)
 			connectedDice.get(diceId).pulseLed(5, 30, 20, [0, 255, 0]);
 		
-		let diceRollsPrompt = document.querySelectorAll('#roll_prompt');
+		let diceRollsPrompt = document.querySelectorAll('form[id^="roll-resolver"');
+		
 		if (GoDiceRoll.isEnabled() && diceRollsPrompt && diceRollsPrompt.length > 0){
 			Utils.populateRollPrompt(diceRollsPrompt, dieType, value);
-		}	else{
+		}else{
 			Utils.startTimeout(dieType, dieFaces, value);
 		}
 	}
 	
 	static populateRollPrompt(diceRollsPrompt, dieType, value) {
 				
-		let diceRolls = diceRollsPrompt[0].querySelectorAll('input[name^="'+dieType.toLowerCase()+'"]')
+		let diceRolls = diceRollsPrompt[0].querySelectorAll('input[placeholder^="'+dieType.toLowerCase()+'"]')
 		if(!diceRolls || diceRolls.length == 0)	{
 			console.log("No roll required for the type "+dieType.toLowerCase());
 			return;
@@ -224,15 +223,14 @@ export class Utils {
 			if(!diceRolls[r]?.value)
 			{
 				diceRolls[r].value = parseInt(value);
-				Utils.rollFieldUpdate(diceRolls[r]);	
+				Utils.rollFieldUpdate(diceRollsPrompt, diceRolls[r]);	
 				flagAssigned = true;
 			}
 		}
 	}
 	
-	static rollFieldUpdate(dieField){
+	static rollFieldUpdate(diceRollsPrompt, dieField){
 		console.debug(dieField);
-		let diceRollsPrompt = document.querySelectorAll('#roll_prompt');
 		let remainRolls = parseInt(diceRollsPrompt[0].getAttribute("data-counter"));
 		
 		dieField.setAttribute('readonly', true);
@@ -247,7 +245,7 @@ export class Utils {
 	static sendRolls(diceRollsPrompt){
 		let remainRolls = parseInt(diceRollsPrompt[0].getAttribute("data-counter"));	
 		if(remainRolls<=0 && GoDiceRoll.isAutoSendEnabled()) {
-			document.getElementById("roll_submit").click();
+			diceRollsPrompt[0].querySelectorAll("#roll_submit")[0].click();
 		}	
 	}
 	

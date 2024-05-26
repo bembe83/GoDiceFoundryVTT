@@ -47,7 +47,7 @@ export class GoDiceRollPrompt extends FormApplication {
         const inputs = this.form.querySelectorAll("input");
         for ( const input of inputs ) {
             if ( !input.value ) {
-                data[input.name] = input.placeholder;
+                data[input.name] = input.dataset.temp;
             }else{
 				data[input.name] = input.value;
 			}
@@ -86,6 +86,7 @@ export class GoDiceRollPrompt extends FormApplication {
 	/** @inheritdoc */
 	activateListeners(html) {
 		super.activateListeners(html);
-		html.find(".dice-term-input").change((ev)=>{ Utils.rollFieldUpdate(ev.target); })
+		let diceRollsPrompt = document.querySelectorAll('form[id^="roll-resolver"');
+		html.find(".dice-term-input").change((ev)=>{ Utils.rollFieldUpdate(diceRollsPrompt, ev.target); })
 	}
 }

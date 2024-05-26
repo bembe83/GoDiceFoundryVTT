@@ -31,13 +31,13 @@ export async function diceBarInit() {
 		}
 	});
 	
-	Hooks.on("collapseSidebar", ()=> {
+	/*Hooks.on("collapseSidebar", ()=> {
 		let r = document.querySelector(':root'); 
 		let px = document.querySelector("#ui-right").offsetWidth;
 		if(px <100)
 			px = 5;
 		r.style.setProperty('--dicebar-x-pos', px+"px");
-	});
+	});*/
 
 	let diceDisplay = "flex";
 	if (game.settings.get(MODULE_NAME, "DiceBarDisabled") === true) {
@@ -46,10 +46,13 @@ export async function diceBarInit() {
 	}
 
 	let r = document.querySelector(':root');
-	let px = document.querySelector("#ui-right").offsetWidth;
-	if(px <100)
+	let px = window.innerHeight;//document.querySelector("#ui-right").offsetWidth;
+	if(px < 768){		
+		px = 55;
+		r.style.setProperty('--hotbarxpos', "2px");
+	}else
 		px = 5;
-	r.style.setProperty('--dicebar-x-pos', px+"px");
+	r.style.setProperty('--dicebar-y-pos', px+"px");
 	r.style.setProperty('--dicebar-display', diceDisplay);
 	//r.style.setProperty('--godicemodule-path'), Utils.getModulePath());
 	Utils.setDiceBarMaxSlots();
@@ -60,11 +63,11 @@ export async function diceBarInit() {
 export class DiceBar extends Hotbar {
 	
 	static init(){
-		if (document.querySelector('#hud') !== null) {
-			let hbEl = document.querySelector('#hud');
+		if (document.querySelector('#ui-bottom') !== null) {
+			let hbEl = document.querySelector('#ui-bottom').firstElementChild;
 			let dbEl = document.createElement('template');
 			dbEl.setAttribute('id', 'dicebar');
-			hbEl.insertAdjacentElement('afterend', dbEl);
+			hbEl.appendChild(dbEl);
 		}
 	}
 	/**
@@ -99,7 +102,7 @@ export class DiceBar extends Hotbar {
 	/** @override */
 	static get defaultOptions() {
 		let templatePath = Utils.getModulePath() + "templates/dicebar.hbs";
-		return mergeObject(super.defaultOptions, {
+		return foundry.utils.mergeObject(super.defaultOptions, {
 			id: "dicebar",
 			template: templatePath,
 			popOut: false,

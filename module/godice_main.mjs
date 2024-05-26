@@ -44,6 +44,28 @@ Hooks.once('unfulfilled-rolls-bluetooth', function(providers) {
     })
 });
 
+Hooks.on("renderRollResolver", function (html) {
+	console.log("Add Die Counter to Roll-Resolver");
+	let counter = 0;
+	let diceRollsPrompt = document.querySelectorAll('#'+html.id);
+	if(GoDiceRoll.isStyleEnabled()){
+		console.log("Applying GoDice stylesheet rules");
+		diceRollsPrompt[0].classList.add("godiceroll-span");
+	}
+	
+	let inputs = diceRollsPrompt[0].querySelectorAll('.input-grid');
+	for (let i=0; i<inputs.length;i++) {
+		let inputList = inputs[i].querySelectorAll("input");
+		counter+=inputList.length;
+		for(let j=0;j<inputList.length; j++) {
+			inputList[j].onchange= function(ev) { Utils.rollFieldUpdate(diceRollsPrompt, ev.target); }
+		}
+	}
+	
+	diceRollsPrompt[0].dataset.counter = counter;
+	diceRollsPrompt[0].querySelectorAll("footer")[0].querySelectorAll("button")[0].id = "roll_submit";
+});
+
 GoDice.prototype.onDiceConnected = async (diceId, diceInstance) => {
 
 	if (connectedDice.get(diceId)) {

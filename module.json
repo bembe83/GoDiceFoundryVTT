@@ -1,60 +1,58 @@
 {
-	"id": "go-dice-module",
-	"name": "go-dice-module",
-	"title": "GoDice Module",
-	"version": "2.0.0",
-	"description": "A module to allow to play with real GoDice dice with foundryVTT using Unfullfilled Rolls module",
-	"authors": [
-		{
-			"name": "Bembe83"
-		}
-	],
-	"relationships": {
-		"requires": [
-			{
-				"id": "lib-wrapper",
-				"type": "module"
-			},
-			{
-				"id": "unfulfilled-rolls",
-				"type": "module"
-			 }
-		]
-	},
-	"minimumCoreVersion": "10.307",
-	"compatibleCoreVersion": "11",
-	"compatibility": {
-		"minimum": 10,
-		"verified": "11.315"
-	},
-	"languages": [
-		{
-			"lang": "en",
-			"name": "English",
-			"path": "lang/en.json",
-			"flag": {
-				
-			}
-		},
-		{
-			"lang": "it",
-			"name": "Italiano",
-			"path": "lang/it.json",
-			"flag": {
-				
-			}
-		}
-	],
-	"esmodules": [
-		"module/godice_main.mjs"
-	],
-	"styles": [
-		"styles/main.css",
-		"styles/dicebar.css",
-		"styles/roll_prompt.css"
-	],
-	"socket": true,
-	"url": "https://github.com/bembe83/GoDiceFoundryVTT",
-	"manifest": "https://github.com/bembe83/GoDiceFoundryVTT/releases/download/V2.0.0/module.json",
-	"download": "https://github.com/bembe83/GoDiceFoundryVTT/releases/download/V2.0.0/GoDiceFoundryVTT_V2.0.0.zip"
+  "id": "go-dice-module",
+  "title": "GoDice Module",
+  "version": "2.1.0",
+  "description": "A module to allow to play with real Go Dice dice with foundryVTT using Unfullfilled Rolls module",
+  "authors": [
+    {
+      "name": "Bembe83",
+      "flags": {}
+    }
+  ],
+  "relationships": {
+    "requires": [
+      {
+        "id": "lib-wrapper",
+        "type": "module",
+        "compatibility": {}
+      }
+    ],
+    "recommends": [
+      {
+        "id": "unfulfilled-rolls",
+        "type": "module",
+        "compatibility": {}
+      }
+    ]
+  },
+  "compatibility": {
+    "minimum": "10",
+    "verified": "12"
+  },
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json",
+      "flags": {}
+    },
+    {
+      "lang": "it",
+      "name": "Italiano",
+      "path": "lang/it.json",
+      "flags": {}
+    }
+  ],
+  "esmodules": [
+    "module/godice_main.mjs"
+  ],
+  "styles": [
+    "styles/main.css",
+    "styles/dicebar.css",
+    "styles/roll_prompt.css"
+  ],
+  "socket": true,
+  "url": "https://github.com/bembe83/GoDiceFoundryVTT",
+  "manifest": "https://github.com/bembe83/GoDiceFoundryVTT/releases/download/V2.1.0/module.json",
+  "download": "https://github.com/bembe83/GoDiceFoundryVTT/releases/download/V2.1.0/GoDiceFoundryVTT_V2.1.0.zip"
 }

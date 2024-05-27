@@ -2,7 +2,7 @@
   "id": "go-dice-module",
   "title": "GoDice Module",
   "version": "2.1.0",
-  "description": "A module to allow to play with real Go Dice dice with foundryVTT using Unfullfilled Rolls module",
+  "description": "A module to allow to play with real Go Dice dice with foundryVTT using Unfullfilled Rolls or core manual roll from V12",
   "authors": [
     {
       "name": "Bembe83",
@@ -51,7 +51,6 @@
     "styles/dicebar.css",
     "styles/roll_prompt.css"
   ],
-  "socket": true,
   "url": "https://github.com/bembe83/GoDiceFoundryVTT",
   "manifest": "https://github.com/bembe83/GoDiceFoundryVTT/releases/download/V2.1.0/module.json",
   "download": "https://github.com/bembe83/GoDiceFoundryVTT/releases/download/V2.1.0/GoDiceFoundryVTT_V2.1.0.zip"

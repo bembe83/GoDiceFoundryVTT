@@ -32,6 +32,12 @@ Hooks.on('ready', () => {
 	Utils.reconnectLoadedDice();
 	setInterval(function() { Utils.reconnectDice(); }, 5000);
 	console.debug("DiceBar | Foundry setup...");
+	document.querySelectorAll("#chat-message")[0].addEventListener("keypress", function(event){ 
+		if(event.key === 'Enter' && event.code === '') { 
+			new Roll(ChatLog.parse(document.querySelectorAll("#chat-message")[0].value)[1][0][2]).toMessage();
+			document.querySelectorAll("#chat-message")[0].value = ''
+		} 
+	});
 	diceBarInit();		
 });
 

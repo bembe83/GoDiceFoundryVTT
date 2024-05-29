@@ -38,6 +38,15 @@ Hooks.on('ready', () => {
 			document.querySelectorAll("#chat-message")[0].value = ''
 		} 
 	});
+	
+	foundry.utils.mergeObject(CONFIG.Dice.fulfillment.methods, {
+		MODULE_NAME: {
+			label:"GoDice", 
+			interactive: true, 
+			icon: '<i class="godice-icon"></i>'
+		}
+	});
+	
 	diceBarInit();		
 });
 
